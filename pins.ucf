@@ -166,3 +166,9 @@ NET "dac1_data" DRIVE = 12;
 NET "dac1_data" SLEW = FAST;
 NET "dac0_data" LOC = B11;
 NET "dac1_data" LOC = B12;
+
+NET "reset_btn" IOSTANDARD = LVCMOS33;
+NET "reset_btn" DRIVE = 12;
+NET "reset_btn" SLEW = SLOW;
+NET "reset_btn" LOC = A16;
+NET "reset_btn" PULLUP;
