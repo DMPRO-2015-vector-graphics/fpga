@@ -32,7 +32,7 @@ begin
         state <= waiting;
         shift_counter := 0;
         sync <= '1';
-    elsif(clk'event and clk='1') then
+    elsif(rising_edge(clk)) then
         case state is
             when waiting =>
                 shift_counter := 0;
