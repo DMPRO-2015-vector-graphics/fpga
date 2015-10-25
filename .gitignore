@@ -1,0 +1,7 @@
+# Filetypes
+.DS_Store
+.*.swp
+
+# Directories
+work/
+product/
