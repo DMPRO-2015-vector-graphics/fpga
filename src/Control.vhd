@@ -9,13 +9,14 @@ use work.Defs.all;
 
 entity Control is
     generic (
-                DATA_WIDTH : integer := 32
-            );
+        INSTR_WIDTH : integer := 32;
+        DATA_WIDTH : integer := 32
+    );
     port (
              clk                 : in std_logic;
              reset               : in std_logic;
              processor_enable    : in std_logic;
-             instruction         : in std_logic_vector(31 downto 0);		
+             instruction         : in std_logic_vector(INSTR_WIDTH-1 downto 0);		
              RegDst              : out std_logic := '0';
              Branch              : out std_logic := '0';
              Jump                : out std_logic := '0';
@@ -110,7 +111,5 @@ begin
             null;
         end if;
     end process;
-
-
 end Behavioral;
 

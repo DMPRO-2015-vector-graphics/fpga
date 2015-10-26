@@ -28,10 +28,10 @@ begin
         elsif rising_edge(clk) and pc_write = '1' then
 
             if jump = '1' then
-                address <= instruction(7 downto 0);
+                address <= instruction(ADDR_WIDTH-1 downto 0);
             else
                 if branch = '1' and zero = '1' then
-                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(instruction(7 downto 0)));
+                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(instruction(ADDR_WIDTH-1 downto 0)));
                 else
                     address <= std_logic_vector(unsigned(address) + 1);
                 end if;

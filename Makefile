@@ -135,12 +135,12 @@ ${TOP_NAME}.prj: $(patsubst %.xco,%.vhd,${SUPPORT_SRC} ${STUDENT_SRC})
 	done > $@ && echo "OK" || echo "failed"
 
 # Target for generating VHDL from XCO specification.
+# May need work
 %.vhd %.ngc: %.xco
 	@echo "Generating IP core from description file \"$*\""
 	@. /opt/Xilinx/12.4/ISE_DS/ISE/settings32.sh && \
 	cd ${WORK_DIR} && \
-	${COREGEN} -b $< && \
-	cp -v $$(basename $*).vhd $$(basename $*).ngc $(dir $@)
+	${COREGEN} -p coregen.cgp -b $<
 
 .PHONY: clean
 clean:
