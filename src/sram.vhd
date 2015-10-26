@@ -34,6 +34,6 @@ begin
             end if;
         end if;
         a <= address;
-        ce <= '1';
+        ce <= '0';
     end process;
 end Behavioral;
