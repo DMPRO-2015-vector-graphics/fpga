@@ -1,7 +1,10 @@
 # Filetypes
 .DS_Store
 .*.swp
+.lso
+*.prj
+*.xst
 
 # Directories
 work/
-product/
+products/

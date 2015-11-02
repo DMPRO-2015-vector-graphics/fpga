@@ -119,7 +119,7 @@ begin
     -- IMEM
     imem_address <= program_counter_val;
     -- DMEM
-    dmem_address <= ALUResult(7 downto 0);
+    dmem_address <= ALUResult(ADDR_WIDTH-1 downto 0);
     dmem_data_out <= read_data_2;
     dmem_write_enable <= MemWrite;
 end MultiCycleMIPS;
