@@ -10,16 +10,16 @@ entity VECTOR3K is
         DATA_WIDTH : integer := 16
     );
     port (
-        clk, reset              : in std_logic
+        clk, reset              : in std_logic;
+        imem_address            : out std_logic_vector(ADDR_WIDTH-1 downto 0);
+        dmem_address            : out std_logic_vector(ADDR_WIDTH-1 downto 0);
+        dmem_data_out           : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        dmem_write_enable       : out std_logic
     );
 end VECTOR3K;
 
 architecture Behavior of VECTOR3K is
     -- Core out signals
-    signal imem_address : std_logic_vector(ADDR_WIDTH-1 downto 0);
-    signal dmem_address : std_logic_vector(ADDR_WIDTH-1 downto 0);
-    signal dmem_data_out: std_logic_vector(DATA_WIDTH-1 downto 0);
-    signal dmem_write_enable: std_logic;
 begin
     core_inst: entity work.Core(MultiCycleMIPS) 
         generic map (

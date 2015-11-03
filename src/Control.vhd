@@ -9,9 +9,9 @@ use work.Defs.all;
 
 entity Control is
     generic (
-        INSTR_WIDTH : integer := 32;
-        DATA_WIDTH : integer := 32
-    );
+                INSTR_WIDTH : integer := 32;
+                DATA_WIDTH : integer := 32
+            );
     port (
              clk                 : in std_logic;
              reset               : in std_logic;
@@ -30,15 +30,13 @@ entity Control is
 end Control;
 
 architecture Behavioral of Control is
-    signal state : state_t := S_OFFLINE;
+    signal state : state_t := S_FETCH;
 begin
 
     state_transitions: process(clk, reset, processor_enable)
     begin
 
-        if processor_enable = '0' then
-            state <= S_OFFLINE;
-        elsif reset = '1' then
+        if reset = '1' then
             state <= S_FETCH;
         elsif rising_edge(clk) then
             PCWrite <= '0';
