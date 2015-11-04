@@ -8,13 +8,13 @@ entity instruction_fetch is
         SRAM_ADDR_WIDTH : integer := 19;
         SRAM_DATA_WIDTH : integer := 16;
         INSTR_WIDTH : integer := 32
-    )
+    );
     Port ( clk : in STD_LOGIC;
            reset : in STD_LOGIC;
            address : in  STD_LOGIC_VECTOR (SRAM_ADDR_WIDTH-1 downto 0);
            instruction : out  STD_LOGIC_VECTOR (INSTR_WIDTH-1 downto 0);
-           valid : out STD_LOGIC
-           sram_addr : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
+           valid : out STD_LOGIC;
+           sram_addr : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0)
        );
 end instruction_fetch;
 
