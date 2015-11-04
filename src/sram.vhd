@@ -4,12 +4,13 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity sram is
     Port (
         clk : in STD_LOGIC;
+        -- Facing SRAM
         we : out  STD_LOGIC;
         oe : out  STD_LOGIC;
         a : out  STD_LOGIC_VECTOR (18 downto 0);
         io : inout  STD_LOGIC_VECTOR (15 downto 0);
-        ce : out  STD_LOGIC;
 
+        -- Facing V3K
         address : in  STD_LOGIC_VECTOR (18 downto 0);
         data_in : in  STD_LOGIC_VECTOR (15 downto 0);
         data_out : out  STD_LOGIC_VECTOR (15 downto 0);
@@ -34,6 +35,5 @@ begin
             end if;
         end if;
         a <= address;
-        ce <= '0';
     end process;
 end Behavioral;
