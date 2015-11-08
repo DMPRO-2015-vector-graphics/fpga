@@ -34,8 +34,12 @@ end VECTOR3K;
 architecture Behavior of VECTOR3K is
     -- IF out signals
     signal instr_valid : std_logic := '0';
+    signal instruction : std_logic_vector(INSTR_WIDTH-1 downto 0) := x"00000000";
+
+    -- Core out signals
+    signal imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
 begin
-    if_inst: entity work.instruciton_fetch
+    if_inst: entity work.instruction_fetch
         generic map (
             SRAM_ADDR_WIDTH => SRAM_ADDR_WIDTH,
             SRAM_DATA_WIDTH => SRAM_DATA_WIDTH,
@@ -53,7 +57,7 @@ begin
             sram_data => sram_data
         );
 
-    core_inst: entity work.Core(MultiCycleMIPS) 
+    core_inst: entity work.Core(MultiCycle) 
         generic map (
             ADDR_WIDTH => ADDR_WIDTH,
             DATA_WIDTH => DATA_WIDTH,
@@ -62,9 +66,9 @@ begin
         port map (
             clk => clk,
             reset => reset,
-            processor_enable    => '1',
+            processor_enable    => fpga_cs,
             -- instruction memory connection
-            imem_data_in        => x"FFFFFFFF",        -- instruction data from memory
+            imem_data_in        => instruction,        -- instruction data from memory
             imem_address        => imem_address,            -- instruction address to memory
             -- data memory connection
             dmem_data_in        => x"BEEF",        -- read data from memory

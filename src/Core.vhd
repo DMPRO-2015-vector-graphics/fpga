@@ -6,8 +6,8 @@ use work.defs.all;
 entity Core is
     generic (
         INSTR_WIDTH: integer := 32;
-        ADDR_WIDTH : integer := 8;
         DATA_WIDTH : integer := 32
+        ADDR_WIDTH : integer := 8;
     );
     port (
         clk, reset 			: in std_logic;
@@ -21,7 +21,7 @@ entity Core is
     );
 end Core;
 
-architecture MultiCycleMIPS of Core is
+architecture MultiCycle of Core is
     -- PC out signals
     signal program_counter_val : std_logic_vector(ADDR_WIDTH-1 downto 0);
     -- IMEM out signals
