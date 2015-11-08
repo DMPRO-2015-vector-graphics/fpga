@@ -34,10 +34,10 @@ end VECTOR3K;
 architecture Behavior of VECTOR3K is
     -- IF out signals
     signal instr_valid : std_logic := '0';
-    signal instruction : std_logic_vector(INSTR_WIDTH-1 downto 0) := x"00000000";
+    signal instruction : std_logic_vector(INSTR_WIDTH-1 downto 0) := others( => '0');
 
     -- Core out signals
-    signal imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
+    signal imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
 begin
     if_inst: entity work.instruction_fetch
         generic map (
@@ -57,23 +57,26 @@ begin
             sram_data => sram_data
         );
 
-    core_inst: entity work.Core(MultiCycle) 
-        generic map (
-            ADDR_WIDTH => ADDR_WIDTH,
-            DATA_WIDTH => DATA_WIDTH,
-            INSTR_WIDTH => INSTR_WIDTH
-        ) 
-        port map (
-            clk => clk,
-            reset => reset,
-            processor_enable    => fpga_cs,
-            -- instruction memory connection
-            imem_data_in        => instruction,        -- instruction data from memory
-            imem_address        => imem_address,            -- instruction address to memory
-            -- data memory connection
-            dmem_data_in        => x"BEEF",        -- read data from memory
-            dmem_address        => dmem_address,            -- address to memory
-            dmem_data_out       => dmem_data_out,   -- write data to memory
-            dmem_write_enable   => dmem_write_enable  -- write enable to memory
-        );
+
+        fb_data <= instruction;
+
+--    core_inst: entity work.Core(MultiCycle) 
+--        generic map (
+--            ADDR_WIDTH => ADDR_WIDTH,
+--            DATA_WIDTH => DATA_WIDTH,
+--            INSTR_WIDTH => INSTR_WIDTH
+--        ) 
+--        port map (
+--            clk => clk,
+--            reset => reset,
+--            processor_enable    => fpga_cs,
+--            -- instruction memory connection
+--            imem_data_in        => instruction,        -- instruction data from memory
+--            imem_address        => imem_address,            -- instruction address to memory
+--            -- data memory connection
+--            dmem_data_in        => x"BEEF",        -- read data from memory
+--            dmem_address        => dmem_address,            -- address to memory
+--            dmem_data_out       => dmem_data_out,   -- write data to memory
+--            dmem_write_enable   => dmem_write_enable  -- write enable to memory
+--        );
 end Behavior;
