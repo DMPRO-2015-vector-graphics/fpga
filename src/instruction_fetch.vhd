@@ -13,9 +13,9 @@ entity instruction_fetch is
            reset : in STD_LOGIC;
            address : in  STD_LOGIC_VECTOR (SRAM_ADDR_WIDTH-1 downto 0);
            instruction : out  STD_LOGIC_VECTOR (INSTR_WIDTH-1 downto 0);
-           valid : out STD_LOGIC
+           valid : out STD_LOGIC;
            sram_addr : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
-           sram_data : out std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
+           sram_data : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
            sram_wen : out std_logic;
            sram_ren : out std_logic
        );

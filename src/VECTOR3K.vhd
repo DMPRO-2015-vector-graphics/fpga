@@ -24,7 +24,7 @@ entity VECTOR3K is
         fb_ren                  : out std_logic;
         fb_cs                   : out std_logic;
         -- EBI
-        fpga_cs                 : in std_logic;
+        fpga_cs                 : in std_logic
         -- DAC
         -- TODO
         --
@@ -34,7 +34,7 @@ end VECTOR3K;
 architecture Behavior of VECTOR3K is
     -- IF out signals
     signal instr_valid : std_logic := '0';
-    signal instruction : std_logic_vector(INSTR_WIDTH-1 downto 0) := others( => '0');
+    signal instruction : std_logic_vector(INSTR_WIDTH-1 downto 0) := (others => '0');
 
     -- Core out signals
     signal imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
@@ -43,7 +43,7 @@ begin
         generic map (
             SRAM_ADDR_WIDTH => SRAM_ADDR_WIDTH,
             SRAM_DATA_WIDTH => SRAM_DATA_WIDTH,
-            DATA_WIDTH => INSTR_WIDTH
+            INSTR_WIDTH => INSTR_WIDTH
         )
         port map (
             clk => clk,
@@ -58,7 +58,7 @@ begin
         );
 
 
-        fb_data <= instruction;
+    fb_data <= instruction;
 
 --    core_inst: entity work.Core(MultiCycle) 
 --        generic map (
