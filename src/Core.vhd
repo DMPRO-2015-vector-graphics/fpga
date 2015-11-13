@@ -7,17 +7,21 @@ entity Core is
     generic (
         INSTR_WIDTH: integer := 32;
         DATA_WIDTH : integer := 32;
-        ADDR_WIDTH : integer := 8
+        ADDR_WIDTH : integer := 19;
+        PRIMITIVE_WIDTH : integer := 136;
+        SCENE_MEM_ADDR_WIDTH : integer := 8;
     );
     port (
         clk, reset 			: in std_logic;
         processor_enable		: in std_logic;
+        -- IMEM
         imem_data_in			: in std_logic_vector(INSTR_WIDTH-1 downto 0);
         imem_address			: out std_logic_vector(ADDR_WIDTH-1 downto 0);
-        dmem_data_in			: in std_logic_vector(DATA_WIDTH-1 downto 0);
-        dmem_address			: out std_logic_vector(ADDR_WIDTH-1 downto 0);
-        dmem_data_out			: out std_logic_vector(DATA_WIDTH-1 downto 0);
-        dmem_write_enable		: out std_logic
+        -- Scene
+        scene_mem_we                    : out std_logic;
+        scene_mem_data_out              : out std_logic_vector(PRIMITIVE_WIDTH-1 downto 0);
+        scene_mem_data_in               : in std_logic_vector(PRIMITIVE_WIDTH-1 downto 0);
+        scene_mem_addr                  : out std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0);
     );
 end Core;
 
@@ -70,16 +74,16 @@ begin
         ADDR_WIDTH => ADDR_WIDTH
     )
     port map(
-        reset => reset,
-        clk => clk,
-		jump => Jump,
-		branch => Branch,
-		zero => Zero,
-		instruction => imem_data_in(25 downto 0),
-        pc_write => PCWrite,
-        address_out => program_counter_val
+       reset => reset,
+       clk => clk,
+       jump => Jump,
+       branch => Branch,
+       zero => Zero,
+       instruction => imem_data_in(25 downto 0),
+       pc_write => PCWrite,
+       address_out => program_counter_val
     );
-    
+
     registers: entity work.Registers
     generic map(
         DATA_WIDTH => DATA_WIDTH
@@ -115,12 +119,8 @@ begin
         ALUResult => ALUResult,
         ALUSrc => ALUSrc
     );
-    
+
     -- IMEM
     imem_address <= program_counter_val;
-    -- DMEM
-    dmem_address <= ALUResult(ADDR_WIDTH-1 downto 0);
-    dmem_data_out <= read_data_2;
-    dmem_write_enable <= MemWrite;
 end MultiCycle;
 

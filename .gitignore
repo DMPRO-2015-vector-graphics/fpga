@@ -1,6 +1,7 @@
 # Filetypes
 .DS_Store
 .*.swp
+.*.swo
 .lso
 *.prj
 *.xst

@@ -99,7 +99,8 @@ ${TRANSLATE_OUT}: ${SYNTH_OUT} ${CONSTRAINT_FILES} ${IP_NETLISTS}
 	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	cp ${SYNTH_OUT} ${IP_NETLISTS} . && \
-	${NGDBUILD} -intstyle ise -dd _ngo -sd src/framework -nt timestamp $(addprefix -uc ,${CONSTRAINT_FILES})  -p xc6slx16-csg324-2 ${TOP_NAME}.ngc ${TOP_NAME}.ngd && \
+	${NGDBUILD} -intstyle ise -dd _ngo -sd src/framework -nt timestamp $(addprefix -uc ,${CONSTRAINT_FILES})  -p xc6slx45-csg324-2 ${TOP_NAME}.ngc ${TOP_NAME}.ngd && \
+           dac_sync : out  STD_LOGIC;
 	cp -v $(notdir $@) $(dir $@)
 
 

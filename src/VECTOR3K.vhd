@@ -8,7 +8,10 @@ entity VECTOR3K is
         INSTR_WIDTH : integer := 32;
         DATA_WIDTH : integer := 32;
         SRAM_ADDR_WIDTH : integer := 19;
-        SRAM_DATA_WIDTH : integer := 16
+        SRAM_DATA_WIDTH : integer := 16;
+        PRIMITIVE_WIDTH : integer := 136;
+        SCENE_MEM_ADDR_WIDTH : integer := 8
+
     );
     port (
         clk, reset              : in std_logic;
@@ -36,8 +39,12 @@ architecture Behavior of VECTOR3K is
     signal instr_valid : std_logic := '0';
     signal instruction : std_logic_vector(INSTR_WIDTH-1 downto 0) := (others => '0');
 
-    -- Core out signals
-    signal imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
+    -- Core signals
+    signal proc_imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
+    signal proc_scene_mem_write_data : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0) := (others => '0');
+    signal proc_scene_mem_addr : std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0) := (others => '0');
+    signal proc_scene_mem_read_data : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0) := (others = '0');
+    signal proc_scene_mem_we : std_logic := '0';
 begin
     if_inst: entity work.instruction_fetch
         generic map (
@@ -48,7 +55,7 @@ begin
         port map (
             clk => clk,
             reset => reset,
-            address => imem_address,
+            address => proc_imem_address,
             instruction => instruction,
             valid => instr_valid,
             sram_wen => sram_wen,
@@ -60,23 +67,40 @@ begin
 
     fb_data <= instruction(15 downto 0);
 
---    core_inst: entity work.Core(MultiCycle) 
---        generic map (
---            ADDR_WIDTH => ADDR_WIDTH,
---            DATA_WIDTH => DATA_WIDTH,
---            INSTR_WIDTH => INSTR_WIDTH
---        ) 
---        port map (
---            clk => clk,
---            reset => reset,
---            processor_enable    => fpga_cs,
---            -- instruction memory connection
---            imem_data_in        => instruction,        -- instruction data from memory
---            imem_address        => imem_address,            -- instruction address to memory
---            -- data memory connection
---            dmem_data_in        => x"BEEF",        -- read data from memory
---            dmem_address        => dmem_address,            -- address to memory
---            dmem_data_out       => dmem_data_out,   -- write data to memory
---            dmem_write_enable   => dmem_write_enable  -- write enable to memory
---        );
+    scene_mem: entity work.DualPortMem
+    port map (
+        clka => clk, clkb => clk,
+        -- port A: processor, read/write
+        wea(0) => proc_scene_mem_we,
+        dina => proc_scene_mem_write_data,
+        addra => proc_scene_mem_addr,
+        douta => proc_scene_mem_read_data,
+        -- port B: output modules, read
+        -- TODO: wire this agains actual output modules
+        web(0) => '0',
+        dinb => (others => '0'),
+        addrb => (others => '0')
+    )
+
+    core_inst: entity work.Core(MultiCycle) 
+        generic map (
+            ADDR_WIDTH => SRAM_ADDR_WIDTH,
+            DATA_WIDTH => DATA_WIDTH,
+            INSTR_WIDTH => INSTR_WIDTH,
+            PRIMITIVE_WIDTH => PRIMITIVE_WIDTH,
+            SCENE_MEM_ADDR_WIDTH => SCENE_MEM_ADDR_WIDTH
+        ) 
+        port map (
+            clk => clk,
+            reset => reset,
+            processor_enable    => fpga_cs,
+            -- instruction memory connection
+            imem_data_in        => instruction,
+            imem_address        => proc_imem_address,
+            -- data memory connection
+            scene_mem_we        => proc_scene_mem_we,
+            scene_mem_data_out  => proc_scene_mem_write_data,
+            scene_mem_addr      => proc_scene_mem_addr,
+            scene_data_in       => proc_scene_mem_read_data
+        );
 end Behavior;
