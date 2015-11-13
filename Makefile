@@ -85,7 +85,7 @@ ${MAP_OUT}: ${TRANSLATE_OUT}
 	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	cp $^ . && \
-	${MAP} -intstyle ise -p xc6slx16-csg324-2 -w -logic_opt off -ol high -t 1 -xt 0 -register_duplication off -r 4 -global_opt off -mt off -ir off -pr off -lc off -power off -o ${TOP_NAME}_map.ncd ${TOP_NAME}.ngd ${TOP_NAME}.pcf  && \
+	${MAP} -intstyle ise -p xc6slx45-csg324-2 -w -logic_opt off -ol high -t 1 -xt 0 -register_duplication off -r 4 -global_opt off -mt off -ir off -pr off -lc off -power off -o ${TOP_NAME}_map.ncd ${TOP_NAME}.ngd ${TOP_NAME}.pcf  && \
 	cp -v $(notdir $@) ${TOP_NAME}.pcf ${TOP_NAME}_map.mrp $(dir $@)
 
 

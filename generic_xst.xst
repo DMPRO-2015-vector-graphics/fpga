@@ -6,7 +6,7 @@ run
 -top @designname@                                 
 -ifmt mixed                                       
 -ofmt NGC                                         
--p xc6slx16-2-csg324                              
+-p xc6slx45-2-csg324                              
 -opt_mode Speed                                   
 -opt_level 1                                      
 -power NO                                         

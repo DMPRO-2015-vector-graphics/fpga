@@ -4,7 +4,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity dac_output is
     Port ( clk : in  STD_LOGIC;
            reset : in  STD_LOGIC;
-           dac_sync : out  STD_LOGIC;
            dac_clk : out  STD_LOGIC;
            dac_x : out  STD_LOGIC;
            dac_y : out  STD_LOGIC;
@@ -14,6 +13,7 @@ end dac_output;
 
 architecture Behavioral of dac_output is
 signal piso_in : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
+signal dac_sync : std_logic := '0';
 begin
     piso: entity work.piso PORT MAP(
 		clk => clk,
