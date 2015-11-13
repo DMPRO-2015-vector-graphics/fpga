@@ -58,7 +58,7 @@ begin
         );
 
 
-    fb_data <= instruction;
+    fb_data <= instruction(15 downto 0);
 
 --    core_inst: entity work.Core(MultiCycle) 
 --        generic map (

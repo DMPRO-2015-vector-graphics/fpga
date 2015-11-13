@@ -15,7 +15,7 @@ end dac_output;
 architecture Behavioral of dac_output is
 signal piso_in : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
 begin
-	piso: piso PORT MAP(
+    piso: entity work.piso PORT MAP(
 		clk => clk,
 		reset => reset,
 		enable => '1',

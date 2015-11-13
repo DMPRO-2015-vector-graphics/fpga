@@ -6,8 +6,8 @@ use work.defs.all;
 entity Core is
     generic (
         INSTR_WIDTH: integer := 32;
-        DATA_WIDTH : integer := 32
-        ADDR_WIDTH : integer := 8;
+        DATA_WIDTH : integer := 32;
+        ADDR_WIDTH : integer := 8
     );
     port (
         clk, reset 			: in std_logic;
@@ -122,5 +122,5 @@ begin
     dmem_address <= ALUResult(ADDR_WIDTH-1 downto 0);
     dmem_data_out <= read_data_2;
     dmem_write_enable <= MemWrite;
-end MultiCycleMIPS;
+end MultiCycle;
 

@@ -66,7 +66,7 @@ begin
                     state <= high;
                     low_valid <= '1';
                 when high =>
-                    instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH-1) <= temp;
+                    instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= temp;
                     addr <= std_logic_vector(unsigned(addr) + 2);
                     state <= low;
                     high_valid <= '1';
