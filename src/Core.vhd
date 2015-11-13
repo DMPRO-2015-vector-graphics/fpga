@@ -52,20 +52,20 @@ begin
         control_signals_out => control_signals
     );
 
-    --program_counter: entity work.ProgramCounter
-    --generic map(
-    --    ADDR_WIDTH => ADDR_WIDTH
-    --)
-    --port map(
-    --   reset => reset,
-    --   clk => clk,
-    --   jump => control_signals.jump,
-    --   branch => control_signals.branch,
-    --   zero => Zero,
-    --   instruction => instruction,
-    --   pc_write => control_signals.pc_write,
-    --   address_out => program_counter_val
-    --);
+    program_counter: entity work.ProgramCounter
+    generic map(
+        ADDR_WIDTH => ADDR_WIDTH
+    )
+    port map(
+       reset => reset,
+       clk => clk,
+       jump => control_signals.jump,
+       branch => control_signals.branch,
+       zero => Zero,
+       instruction => instruction,
+       pc_write => control_signals.pc_write,
+       address_out => program_counter_val
+    );
 
     registers: entity work.Registers
     generic map(

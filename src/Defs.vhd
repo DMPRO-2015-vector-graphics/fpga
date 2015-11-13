@@ -28,28 +28,26 @@ package Defs is
         nop, jmp, mov, add, lsl, line, bezquad, bezqube, ldr, str, ldrp, strp
     );
 
-    type ALU_source_t is (REG2, INSTR);
-    type MemtoReg_t is (FROM_ALU, FROM_MEM); 
+    type alu_source_t is (REG2, INSTR);
+    type mem_to_reg_t is (FROM_ALU, FROM_MEM); 
 
-    subtype RegWrite_t is boolean;
-    subtype MemWrite_t is boolean;
+    subtype reg_write_t is boolean;
+    subtype mem_write_t is boolean;
     subtype branch_t is boolean;
     subtype jump_t is boolean;
-    subtype PcWrite_t is boolean;
+    subtype pc_write_t is boolean;
 
     type control_signals_t is
         record
-            RegWrite : RegWrite_t;
-            MemtoReg : MemtoReg_t;
-            MemWrite : MemWrite_t;
-            ALU_source : ALU_source_t;
+            RegWrite : reg_write_t;
+            MemtoReg : mem_to_reg_t;
+            MemWrite : mem_write_t;
+            ALU_source : alu_source_t;
             branch : branch_t;
             jump : jump_t;
             op : op_t;
-            pc_write : PcWrite_t;
+            pc_write : pc_write_t;
         end record;
-
-    type PC_addr_source_t is (Branch_addr, PC_addr);
 
     function make_instruction(vec : std_logic_vector(31 downto 0) ) return instruction_t;
     function get_op(opcode : opcode_t) return op_t;

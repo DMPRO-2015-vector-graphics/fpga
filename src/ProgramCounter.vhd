@@ -9,7 +9,7 @@ entity ProgramCounter is
     );
     port (
         clk, reset          : in std_logic;
-        pc_write            : in std_logic;
+        pc_write            : in pc_write_t;
         jump                : in jump_t;
         branch              : in branch_t; 
         zero                : in std_logic;
@@ -25,7 +25,7 @@ begin
     begin
         if reset = '1' then
             address <= (others => '0');
-        elsif rising_edge(clk) and pc_write = '1' then
+        elsif rising_edge(clk) and pc_write = true then
             if jump = true then
                 address <= instruction.target;
             else

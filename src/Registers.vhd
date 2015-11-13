@@ -12,8 +12,8 @@ entity Registers is
         clk, reset                                          : in std_logic;
         read_reg_1, read_reg_2, read_reg_3, read_reg_4      : in reg_t;
         reg_dest                                            : in reg_t;
-        RegWrite                                            : in RegWrite_t;
-        MemToReg                                            : in MemToReg_t;
+        RegWrite                                            : in reg_write_t;
+        MemToReg                                            : in mem_to_reg_t;
         ALUResult                                           : in std_logic_vector(DATA_WIDTH-1 downto 0);
         read_data_1, read_data_2, read_data_3, read_data_4  : out std_logic_vector(DATA_WIDTH-1 downto 0)
     );
