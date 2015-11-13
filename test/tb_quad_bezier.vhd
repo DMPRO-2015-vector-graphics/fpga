@@ -45,7 +45,8 @@ ARCHITECTURE behavior OF tb_quad_bezier IS
          p0 : IN  std_logic_vector(31 downto 0);
          p1 : IN  std_logic_vector(31 downto 0);
          p2 : IN  std_logic_vector(31 downto 0);
-         pout : OUT  std_logic_vector(31 downto 0)
+         pout : OUT  std_logic_vector(31 downto 0);
+			i  : IN std_logic_vector(9 downto 0)
         );
     END COMPONENT;
     
@@ -55,7 +56,7 @@ ARCHITECTURE behavior OF tb_quad_bezier IS
    signal p0 : std_logic_vector(31 downto 0) := (others => '0');
    signal p1 : std_logic_vector(31 downto 0) := (others => '0');
    signal p2 : std_logic_vector(31 downto 0) := (others => '0');
-
+	signal i  : std_logic_vector(9 downto 0) := (others => '0');
  	--Outputs
    signal pout : std_logic_vector(31 downto 0);
 
@@ -70,7 +71,8 @@ BEGIN
           p0 => p0,
           p1 => p1,
           p2 => p2,
-          pout => pout
+          pout => pout,
+			 i => i
         );
 
    -- Clock process definitions
@@ -93,7 +95,28 @@ BEGIN
 		p0 <= x"00010001";
 		p1 <= x"008000FF";
 		p2 <= x"00FF0001";
-		
+		i  <= "0000000001";
+		wait for clk_period;
+		i  <= "0000000010";
+		wait for clk_period;
+		i  <= "0000000100";
+		wait for clk_period;
+		i  <= "0000001000";
+		wait for clk_period;
+		i  <= "0000010000";
+		wait for clk_period;
+		i  <= "0000100000";
+		wait for clk_period;
+		i  <= "0001100000";
+		wait for clk_period;
+		i  <= "0000111000";
+		wait for clk_period;
+		i  <= "0000001000";
+		wait for clk_period;
+		i  <= "0010001000";
+		wait for clk_period;
+		i  <= "1111111111";
+		wait for clk_period;
       -- insert stimulus here 
 
       wait;
