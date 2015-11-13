@@ -10,10 +10,10 @@ entity ProgramCounter is
     port (
         clk, reset          : in std_logic;
         pc_write            : in std_logic;
-        jump                : in std_logic;
-        branch              : in std_logic; 
+        jump                : in jump_t;
+        branch              : in branch_t; 
         zero                : in std_logic;
-        instruction         : in std_logic_vector(26 - 1 downto 0);
+        instruction         : in instruction_t;
         address_out         : out std_logic_vector(ADDR_WIDTH - 1 downto 0)
     );
 end ProgramCounter;
@@ -26,12 +26,11 @@ begin
         if reset = '1' then
             address <= (others => '0');
         elsif rising_edge(clk) and pc_write = '1' then
-
-            if jump = '1' then
-                address <= instruction(ADDR_WIDTH-1 downto 0);
+            if jump = true then
+                address <= instruction.target;
             else
-                if branch = '1' and zero = '1' then
-                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(instruction(ADDR_WIDTH-1 downto 0)));
+                if branch = true and zero = '1' then
+                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(instruction.target));
                 else
                     address <= std_logic_vector(unsigned(address) + 1);
                 end if;

@@ -18,18 +18,20 @@ ARCHITECTURE behavior OF tb_Registers IS
     --Inputs
     signal clk : std_logic := '0';
     signal reset : std_logic := '0';
-    signal read_reg_1 : std_logic_vector(ADDR_WIDTH-1 downto 0) := "00001";
-    signal read_reg_2 : std_logic_vector(ADDR_WIDTH-1 downto 0) := "00001";
-    signal read_reg_3 : std_logic_vector(ADDR_WIDTH-1 downto 0) := "00010";
-    signal RegWrite : std_logic := '0';
-    signal MemToReg : std_logic := '0';
-    signal RegDst : std_logic := '0';
+    signal read_reg_1 : reg_t;
+    signal read_reg_2 : reg_t;
+    signal read_reg_3 : reg_t;
+    signal read_reg_4 : reg_t;
+    signal reg_dest : reg_t;
+    signal RegWrite : RegWrite_t;
+    signal MemToReg : MemToReg_t;
     signal ALUResult : std_logic_vector(DATA_WIDTH-1 downto 0) := x"00000000";
-    signal dmem_data : std_logic_vector(DATA_WIDTH-1 downto 0) := x"00000000";
 
  	--Outputs
     signal read_data_1 : std_logic_vector(DATA_WIDTH-1 downto 0);
     signal read_data_2 : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal read_data_3 : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal read_data_4 : std_logic_vector(DATA_WIDTH-1 downto 0);
 
     -- Clock period definitions
     constant clk_period : time := 10 ns;
@@ -43,22 +45,24 @@ BEGIN
         read_reg_1 => read_reg_1,
         read_reg_2 => read_reg_2,
         read_reg_3 => read_reg_3,
+        read_reg_4 => read_reg_4,
+        reg_dest => reg_dest,
         RegWrite => RegWrite,
-        RegDst => RegDst,
         MemToReg => MemToReg,
         ALUResult => ALUResult,
-        dmem_data => dmem_data,
         read_data_1 => read_data_1,
-        read_data_2 => read_data_2
+        read_data_2 => read_data_2,
+        read_data_3 => read_data_3,
+        read_data_4 => read_data_4
     );
 
     -- Clock process definitions
     clk_process :process
     begin
         clk <= '0';
-		wait for clk_period/2;
-		clk <= '1';
-		wait for clk_period/2;
+	wait for clk_period/2;
+	clk <= '1';
+	wait for clk_period/2;
     end process;
  
 
@@ -70,16 +74,15 @@ BEGIN
         reset <= '1';
         -- Prep for write
         wait for clk_period;
-        RegWrite <= '1';
+        RegWrite <= true;
         reset <= '0';
         -- Write to r1 from alu result
-        read_reg_2 <= "00001";
+        reg_dest <= "00001";
         ALUResult <= x"DEADBEEF";
-        MemToReg <= '0';
-        RegDst <= '0';
-        wait for clk_period*2;
+        MemToReg <= FROM_ALU;
         read_reg_1 <= "00001";
-        RegWrite <= '0';
+        wait for clk_period;
+        RegWrite <= false;
         assert read_data_1 = x"DEADBEEF";
         -- insert stimulus here 
         wait;

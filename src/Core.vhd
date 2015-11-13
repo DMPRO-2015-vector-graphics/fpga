@@ -29,23 +29,14 @@ architecture MultiCycle of Core is
     -- PC out signals
     signal program_counter_val : std_logic_vector(ADDR_WIDTH-1 downto 0);
     -- IMEM out signals
-    signal instruction : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal instruction : instruction_t;
     -- Register out signals
-    signal read_data_1, read_data_2 : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal read_data_1, read_data_2, read_data_3, read_data_4 : std_logic_vector(DATA_WIDTH-1 downto 0);
     -- ALU out signals
     signal Zero : std_logic; 
     signal ALUResult : std_logic_vector(DATA_WIDTH-1 downto 0);
     -- Control out signals
-    signal RegDst : std_logic := '0';
-    signal Branch : std_logic := '0';
-    signal Jump : std_logic := '0';
-    signal MemRead : std_logic := '0';
-    signal MemToReg : std_logic := '0';
-    signal ALUOp : std_logic_vector(1 downto 0) := "00";
-    signal MemWrite : std_logic := '0';
-    signal ALUSrc : std_logic := '0';
-    signal RegWrite : std_logic := '0';
-    signal PCWrite : std_logic := '0';
+    signal control_signals : control_signals_t;
 begin
 
     control: entity work.Control
@@ -57,32 +48,24 @@ begin
         clk => clk,
         reset => reset,
         processor_enable => processor_enable,
-        instruction => imem_data_in,
-        RegDst => RegDst,
-        Branch => Branch,
-        Jump => Jump,
-        MemToReg => MemToReg,
-        ALUOp => ALUOp,
-        MemWrite => MemWrite,
-        ALUSrc => ALUSrc,
-        RegWrite => RegWrite,
-        PCWrite => PCWrite
+        instruction => instruction,
+        control_signals_out => control_signals
     );
 
-    program_counter: entity work.ProgramCounter
-    generic map(
-        ADDR_WIDTH => ADDR_WIDTH
-    )
-    port map(
-       reset => reset,
-       clk => clk,
-       jump => Jump,
-       branch => Branch,
-       zero => Zero,
-       instruction => imem_data_in(25 downto 0),
-       pc_write => PCWrite,
-       address_out => program_counter_val
-    );
+    --program_counter: entity work.ProgramCounter
+    --generic map(
+    --    ADDR_WIDTH => ADDR_WIDTH
+    --)
+    --port map(
+    --   reset => reset,
+    --   clk => clk,
+    --   jump => control_signals.jump,
+    --   branch => control_signals.branch,
+    --   zero => Zero,
+    --   instruction => instruction,
+    --   pc_write => control_signals.pc_write,
+    --   address_out => program_counter_val
+    --);
 
     registers: entity work.Registers
     generic map(
@@ -91,35 +74,41 @@ begin
     port map(
         clk => clk,
         reset => reset,
-        read_reg_1 => imem_data_in(25 downto 21),
-        read_reg_2 => imem_data_in(20 downto 16),
-        read_reg_3 => imem_data_in(15 downto 11),
+        read_reg_1 => instruction.regs,
+        read_reg_2 => instruction.regt,
+        read_reg_3 => instruction.regu,
+        read_reg_4 => instruction.regv,
+        reg_dest => instruction.regd,
         ALUResult => ALUResult,
-        MemToReg => MemToReg,
-        RegWrite => RegWrite,
-        RegDst => RegDst,
-        read_data_1 => read_data_1,
-        read_data_2 => read_data_2
-    );
-
-    alu: entity work.ALU
-    generic map(
-        DATA_WIDTH => DATA_WIDTH,
-        ADDR_WIDTH => ADDR_WIDTH,
-        INSTR_WIDTH => INSTR_WIDTH
-    )
-    port map(
-        clk => clk,
+        MemToReg => control_signals.MemToReg,
+        RegWrite => control_signals.RegWrite,
         read_data_1 => read_data_1,
         read_data_2 => read_data_2,
-        instruction => imem_data_in,
-        ALUOp => ALUOp,
-        Zero => Zero,
-        ALUResult => ALUResult,
-        ALUSrc => ALUSrc
+        read_data_3 => read_data_3,
+        read_data_4 => read_data_4
     );
+
+    --alu: entity work.ALU
+    --generic map(
+    --    DATA_WIDTH => DATA_WIDTH,
+    --    ADDR_WIDTH => ADDR_WIDTH,
+    --    INSTR_WIDTH => INSTR_WIDTH
+    --)
+    --port map(
+    --    clk => clk,
+    --    read_data_1 => read_data_1,
+    --    read_data_2 => read_data_2,
+    --    read_data_3 => read_data_3,
+    --    read_data_4 => read_data_4,
+    --    instruction => imem_data_in,
+    --    op => control_signals.op,
+    --    Zero => Zero,
+    --    ALUResult => ALUResult,
+    --    ALUSrc => control_signals.ALU_source
+    --);
 
     -- IMEM
     imem_address <= program_counter_val;
+    instruction <= make_instruction(imem_data_in);
 end MultiCycle;
 
