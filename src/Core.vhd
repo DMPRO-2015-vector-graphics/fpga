@@ -9,7 +9,7 @@ entity Core is
         DATA_WIDTH : integer := 32;
         ADDR_WIDTH : integer := 19;
         PRIMITIVE_WIDTH : integer := 136;
-        SCENE_MEM_ADDR_WIDTH : integer := 8;
+        SCENE_MEM_ADDR_WIDTH : integer := 8
     );
     port (
         clk, reset 			: in std_logic;
@@ -21,7 +21,7 @@ entity Core is
         scene_mem_we                    : out std_logic;
         scene_mem_data_out              : out std_logic_vector(PRIMITIVE_WIDTH-1 downto 0);
         scene_mem_data_in               : in std_logic_vector(PRIMITIVE_WIDTH-1 downto 0);
-        scene_mem_addr                  : out std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0);
+        scene_mem_addr                  : out std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0)
     );
 end Core;
 
@@ -95,7 +95,6 @@ begin
         read_reg_2 => imem_data_in(20 downto 16),
         read_reg_3 => imem_data_in(15 downto 11),
         ALUResult => ALUResult,
-        dmem_data => dmem_data_in,
         MemToReg => MemToReg,
         RegWrite => RegWrite,
         RegDst => RegDst,

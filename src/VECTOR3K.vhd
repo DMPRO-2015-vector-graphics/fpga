@@ -43,7 +43,7 @@ architecture Behavior of VECTOR3K is
     signal proc_imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
     signal proc_scene_mem_write_data : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0) := (others => '0');
     signal proc_scene_mem_addr : std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0) := (others => '0');
-    signal proc_scene_mem_read_data : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0) := (others = '0');
+    signal proc_scene_mem_read_data : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0) := (others => '0');
     signal proc_scene_mem_we : std_logic := '0';
 begin
     if_inst: entity work.instruction_fetch
@@ -67,7 +67,7 @@ begin
 
     fb_data <= instruction(15 downto 0);
 
-    scene_mem: entity work.DualPortMem
+    scene_mem: entity work.SceneMem
     port map (
         clka => clk, clkb => clk,
         -- port A: processor, read/write
@@ -80,7 +80,7 @@ begin
         web(0) => '0',
         dinb => (others => '0'),
         addrb => (others => '0')
-    )
+    );
 
     core_inst: entity work.Core(MultiCycle) 
         generic map (
@@ -97,10 +97,10 @@ begin
             -- instruction memory connection
             imem_data_in        => instruction,
             imem_address        => proc_imem_address,
-            -- data memory connection
+            -- scene memory connection
             scene_mem_we        => proc_scene_mem_we,
             scene_mem_data_out  => proc_scene_mem_write_data,
             scene_mem_addr      => proc_scene_mem_addr,
-            scene_data_in       => proc_scene_mem_read_data
+            scene_mem_data_in   => proc_scene_mem_read_data
         );
 end Behavior;

@@ -141,7 +141,8 @@ ${TOP_NAME}.prj: $(patsubst %.xco,%.vhd,${SUPPORT_SRC} ${STUDENT_SRC})
 	@echo "Generating IP core from description file \"$*\""
 	@. /opt/Xilinx/12.4/ISE_DS/ISE/settings32.sh && \
 	cd ${WORK_DIR} && \
-	${COREGEN} -p coregen.cgp -b $<
+	${COREGEN} -r -b $< && pwd && \
+	cp -v $$(basename $*).vhd $$(basename $*).ngc $(dir $@)
 
 .PHONY: clean
 clean:

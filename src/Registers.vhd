@@ -13,7 +13,7 @@ entity Registers is
         RegWrite                                : in std_logic;
         RegDst                                  : in std_logic;
         MemToReg                                : in std_logic;
-        ALUResult, dmem_data                    : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        ALUResult                               : in std_logic_vector(DATA_WIDTH-1 downto 0);
         read_data_1, read_data_2                : out std_logic_vector(DATA_WIDTH-1 downto 0)
     );
 end Registers;
@@ -36,11 +36,11 @@ begin
 
     data_mux: process(clk, MemToReg)
     begin
-        if MemToReg = '0' then
-            write_data <= ALUResult;
-        else
-            write_data <= dmem_data;
-        end if;
+        --if MemToReg = '0' then
+        --    write_data <= ALUResult;
+        --else
+        --    write_data <= dmem_data;
+        --end if;
     end process;
 
     process (clk, reset)
@@ -49,7 +49,7 @@ begin
             regFile <= (others => (others => '0'));
         elsif rising_edge(clk) then
             if RegWrite = '1' then
-                regFile(to_integer(unsigned(write_reg_addr))) <= write_data;
+                regFile(to_integer(unsigned(write_reg_addr))) <= ALUResult;
             end if;
         end if;
     end process;
