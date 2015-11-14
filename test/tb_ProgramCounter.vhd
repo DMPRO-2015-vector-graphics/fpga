@@ -27,7 +27,7 @@ ARCHITECTURE behavior OF tb_ProgramCounter IS
  
 BEGIN
  
-	-- Instantiate the Unit Under Test (UUT)
+    -- Instantiate the Unit Under Test (UUT)
     uut: entity work.ProgramCounter
     generic map(
         ADDR_WIDTH => ADDR_WIDTH
@@ -71,18 +71,17 @@ BEGIN
         wait for clk_period;
         -- JMP
         assert address_out = "0101010101010101010";
-        --jump <= false;
-        --branch <= true;
-        --zero <= '1';
-        --instruction <= "";
-        --wait for clk_period;
-        ---- Branch
-        --assert address_out = x"c1";
-        --pc_write <= '0';
-        --jump <= '0';
-        --branch <= '0';
-        --zero <= '0';
-        ---- insert stimulus here 
+        jump <= false;
+        branch <= true;
+        zero <= '1';
+        instruction <= make_instruction(x"3022000A");
+        wait for clk_period;
+        -- Branch
+        assert address_out = "0101010101010110101";
+        pc_write <= false;
+        jump <= false;
+        branch <= false;
+        zero <= '0';
         wait;
    end process;
 END;

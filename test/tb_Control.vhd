@@ -10,19 +10,10 @@ architecture behavior of tb_Control is
     signal clk : std_logic := '0';
     signal reset : std_logic := '0';
     signal processor_enable : std_logic := '0';
-    signal instruction : std_logic_vector(31 downto 0) := x"00000000";
+    signal instruction : instruction_t;
 
     -- Outputs
-    signal RegDst : std_logic;
-    signal Branch : std_logic;
-    signal Jump : std_logic;
-    signal MemToReg : std_logic;
-    signal ALUOp : std_logic_vector(1 downto 0);
-    signal MemWrite : std_logic;
-    signal ALUSrc : std_logic;
-    signal RegWrite : std_logic;
-    signal PCWrite : std_logic;
-
+    signal control_signals_out : control_signals_t;
     -- Clock
     constant clk_period : time := 10 ns;
 begin
@@ -33,15 +24,7 @@ begin
         reset => reset,
         processor_enable => processor_enable,
         instruction => instruction,
-        RegDst => RegDst,
-        Branch => Branch,
-        Jump => Jump,
-        MemToReg => MemToReg,
-        ALUOp => ALUOp,
-        MemWrite => MemWrite,
-        ALUSrc => ALUSrc,
-        RegWrite => RegWrite,
-        PCWrite => PCWrite
+        control_signals_out => control_signals_out
     );
 
     clk_process: process
@@ -64,56 +47,54 @@ begin
         -- R-Type
         instruction <= x"00000000";
         wait for clk_period;
-        assert RegDst = '1';
         assert Branch = '0';
-        assert MemToReg = '0';
+        assert mem_to_reg = '0';
         assert Jump = '0';
         assert ALUOp = "00";
-        assert MemWrite = '0';
-        assert ALUSrc = '0';
-        assert RegWrite = '1';
+        assert mem_write = '0';
+        assert alu_source = '0';
+        assert reg_write = '1';
         -- beq
         instruction <= x"10000000";
         wait for clk_period;
         assert Branch = '1';
         assert Jump = '0';
         assert ALUOp = "10";
-        assert MemWrite = '0';
-        assert ALUSrc = '0';
+        assert mem_write = '0';
+        assert alu_source = '0';
         -- LW
         instruction <= x"8C000000";
         wait for clk_period;
-        assert MemToReg = '1';
+        assert mem_to_reg = '1';
         assert Branch = '0';
         assert Jump = '0';
         assert ALUOp = "01";
-        assert MemWrite = '0';
-        assert ALUSrc = '1';
-        assert RegWrite = '1';
+        assert mem_write = '0';
+        assert alu_source = '1';
+        assert reg_write = '1';
         -- SW
         instruction <= x"AC000000";
         wait for clk_period;
         assert Branch = '0';
         assert Jump = '0';
         assert ALUOp = "01";
-        assert ALUSrc = '1';
-        assert MemWrite = '1';
-        assert RegWrite = '0';
+        assert alu_source = '1';
+        assert mem_write = '1';
+        assert reg_write = '0';
         wait for clk_period*2;
         -- J
         instruction <= x"08000000";
         wait for clk_period;
         assert Jump = '1';
-        assert MemWrite = '0';
+        assert mem_write = '0';
         -- LUI
         instruction <= x"3C000000";
         wait for clk_period;
         assert ALUOp = "11";
-        assert RegWrite = '1';
-        assert ALUSrc = '1';
-        assert MemToReg = '0';
-        assert RegDst = '0';
-        assert MemWrite = '0';
+        assert reg_write = '1';
+        assert alu_source = '1';
+        assert mem_to_reg = '0';
+        assert mem_write = '0';
         wait;
     end process;
 end;

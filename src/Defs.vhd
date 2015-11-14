@@ -15,11 +15,11 @@ package Defs is
     type instruction_t is 
         record
             opcode : opcode_t;
-            regd : reg_t;
-            regs : reg_t;
-            regt : reg_t;
-            regu : reg_t;
-            regv : reg_t;
+            reg1 : reg_t;
+            reg2 : reg_t;
+            reg3 : reg_t;
+            reg4 : reg_t;
+            reg5 : reg_t;
             immediate : immediate_t;
             target : target_t;
         end record;
@@ -30,6 +30,7 @@ package Defs is
 
     type alu_source_t is (REG2, INSTR);
     type mem_to_reg_t is (FROM_ALU, FROM_MEM); 
+    type reg_dest_t is (REG1, REG2, REG3, REG4, REG5);
 
     subtype reg_write_t is boolean;
     subtype mem_write_t is boolean;
@@ -39,10 +40,11 @@ package Defs is
 
     type control_signals_t is
         record
-            RegWrite : reg_write_t;
-            MemtoReg : mem_to_reg_t;
-            MemWrite : mem_write_t;
-            ALU_source : alu_source_t;
+            reg_write : reg_write_t;
+            mem_to_reg : mem_to_reg_t;
+            reg_dest : reg_dest_t;
+            mem_write : mem_write_t;
+            alu_source : alu_source_t;
             branch : branch_t;
             jump : jump_t;
             op : op_t;
@@ -66,11 +68,11 @@ function make_instruction(vec : std_logic_vector(31 downto 0)) return instructio
         variable result : instruction_t;
     begin
         result.opcode := vec(31 downto 26);
-        result.regd := vec(25 downto 21);
-        result.regs := vec(20 downto 16);
-        result.regt := vec(15 downto 11);
-        result.regu := vec(10 downto 6);
-        result.regv := vec(5 downto 1);
+        result.reg1 := vec(25 downto 21);
+        result.reg2 := vec(20 downto 16);
+        result.reg3 := vec(15 downto 11);
+        result.reg4 := vec(10 downto 6);
+        result.reg5 := vec(5 downto 1);
         result.immediate := vec(15 downto 0);
         result.target := vec(18 downto 0);
         return result;

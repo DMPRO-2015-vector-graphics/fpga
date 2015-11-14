@@ -31,7 +31,11 @@ architecture MultiCycle of Core is
     -- IMEM out signals
     signal instruction : instruction_t;
     -- Register out signals
-    signal read_data_1, read_data_2, read_data_3, read_data_4 : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal read_data_1,
+           read_data_2,
+           read_data_3,
+           read_data_4,
+           read_data_5 : std_logic_vector(DATA_WIDTH-1 downto 0);
     -- ALU out signals
     signal Zero : std_logic; 
     signal ALUResult : std_logic_vector(DATA_WIDTH-1 downto 0);
@@ -61,7 +65,7 @@ begin
        clk => clk,
        jump => control_signals.jump,
        branch => control_signals.branch,
-       zero => Zero,
+       zero => zero,
        instruction => instruction,
        pc_write => control_signals.pc_write,
        address_out => program_counter_val
@@ -74,18 +78,20 @@ begin
     port map(
         clk => clk,
         reset => reset,
-        read_reg_1 => instruction.regs,
-        read_reg_2 => instruction.regt,
-        read_reg_3 => instruction.regu,
-        read_reg_4 => instruction.regv,
-        reg_dest => instruction.regd,
+        reg_1 => instruction.reg1,
+        reg_2 => instruction.reg2,
+        reg_3 => instruction.reg3,
+        reg_4 => instruction.reg4,
+        reg_5 => instruction.reg5,
+        reg_dest => control_signals.reg_dest,
         ALUResult => ALUResult,
-        MemToReg => control_signals.MemToReg,
-        RegWrite => control_signals.RegWrite,
+        mem_to_reg => control_signals.mem_to_reg,
+        reg_write => control_signals.reg_write,
         read_data_1 => read_data_1,
         read_data_2 => read_data_2,
         read_data_3 => read_data_3,
-        read_data_4 => read_data_4
+        read_data_4 => read_data_4,
+        read_data_5 => read_data_5
     );
 
     --alu: entity work.ALU

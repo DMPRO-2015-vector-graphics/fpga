@@ -30,7 +30,7 @@ begin
                 address <= instruction.target;
             else
                 if branch = true and zero = '1' then
-                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(instruction.target));
+                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(instruction.immediate));
                 else
                     address <= std_logic_vector(unsigned(address) + 1);
                 end if;
