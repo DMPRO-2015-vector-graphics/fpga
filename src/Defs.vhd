@@ -25,10 +25,10 @@ package Defs is
         end record;
 
     type op_t is (
-        nop, jmp, mov, add, lsl, line, bezquad, bezqube, ldr, str, ldrp, strp
+        nop, jmp, mov, add, lsl, line, bezquad, bezqube, ldr, str, ldrp, strp, beq
     );
 
-    type alu_source_t is (REG2, INSTR);
+    type alu_source_t is (REG1, REG2, REG3, REG4, REG5, IMM);
     type mem_to_reg_t is (FROM_ALU, FROM_MEM); 
     type reg_dest_t is (REG1, REG2, REG3, REG4, REG5);
 
@@ -41,10 +41,12 @@ package Defs is
     type control_signals_t is
         record
             reg_write : reg_write_t;
+            prim_reg_write : reg_write_t;
             mem_to_reg : mem_to_reg_t;
             reg_dest : reg_dest_t;
             mem_write : mem_write_t;
-            alu_source : alu_source_t;
+            alu_source_a : alu_source_t;
+            alu_source_b : alu_source_t;
             branch : branch_t;
             jump : jump_t;
             op : op_t;
