@@ -46,7 +46,7 @@ begin
         -- nop
         report "NOP";
         instruction <= make_instruction(x"00000000");
-        wait for clk_period;
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -60,10 +60,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
+        wait for clk_period/2;
         -- jmp
         report "JMP";
         instruction <= make_instruction(x"0402AAAA");
-        wait for clk_period;
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -77,10 +78,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
+        wait for clk_period/2;
         -- add
         report "ADD";
         instruction <= make_instruction(x"0C211000");
-        wait for clk_period;
+        wait for clk_period/2;
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -94,10 +96,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
-        wait for clk_period;
+        wait for clk_period/2;
         -- mov
         report "MOV";
         instruction <= make_instruction(x"08201234");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -111,10 +114,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
-        wait for clk_period;
+        wait for clk_period/2;
         -- lsl
         report "LSL";
         instruction <= make_instruction(x"10220005");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -128,10 +132,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
-        wait for clk_period;
+        wait for clk_period/2;
         -- line
         report "LINE";
         instruction <= make_instruction(x"14011000");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -145,10 +150,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
-        wait for clk_period;
+        wait for clk_period/2;
         -- bezquad
         report "BEZQUAD";
         instruction <= make_instruction(x"180110C0");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -162,10 +168,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
-        wait for clk_period;
+        wait for clk_period/2;
         -- bezqube
         report "BEZQUBE";
         instruction <= make_instruction(x"1C0110C8");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -179,10 +186,11 @@ begin
         assert control_signals_out.pc_write = true;
         wait for clk_period;
         assert control_signals_out.pc_write = false;
-        wait for clk_period;
+        wait for clk_period/2;
         -- ldr
         report "LDR";
         instruction <= make_instruction(x"2027FFFF");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_MEM;
@@ -194,12 +202,14 @@ begin
         assert control_signals_out.jump = false;
         assert control_signals_out.op = ldr;
         assert control_signals_out.pc_write = true;
-        wait for clk_period*2;
+        wait for clk_period;
         assert control_signals_out.pc_write = false;
         wait for clk_period;
+        wait for clk_period/2;
         -- str
         report "STR";
         instruction <= make_instruction(x"2427FFFF");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -211,46 +221,52 @@ begin
         assert control_signals_out.jump = false;
         assert control_signals_out.op = str;
         assert control_signals_out.pc_write = true;
-        wait for clk_period*2;
+        wait for clk_period;
         assert control_signals_out.pc_write = false;
         wait for clk_period;
+        wait for clk_period/2;
         -- ldrp
         report "LDRP";
         instruction <= make_instruction(x"28000001");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
-        assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.mem_to_reg = FROM_MEM;
         assert control_signals_out.reg_dest = REG1;
-        assert control_signals_out.mem_write = true;
+        assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
         assert control_signals_out.branch = false;
         assert control_signals_out.jump = false;
         assert control_signals_out.op = ldrp;
         assert control_signals_out.pc_write = true;
-        wait for clk_period*2;
+        wait for clk_period;
         assert control_signals_out.pc_write = false;
         wait for clk_period;
+        wait for clk_period/2;
         -- strp
         report "STRP";
         instruction <= make_instruction(x"2C000001");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
-        assert control_signals_out.mem_write = true;
+        assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
         assert control_signals_out.branch = false;
         assert control_signals_out.jump = false;
         assert control_signals_out.op = strp;
         assert control_signals_out.pc_write = true;
-        wait for clk_period*2;
+        wait for clk_period;
         assert control_signals_out.pc_write = false;
         wait for clk_period;
+        wait for clk_period/2;
         -- beq
         report "BEQ";
         instruction <= make_instruction(x"3022000A");
+        wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
@@ -262,9 +278,9 @@ begin
         assert control_signals_out.jump = false;
         assert control_signals_out.op = beq;
         assert control_signals_out.pc_write = true;
-        wait for clk_period*2;
-        assert control_signals_out.pc_write = false;
         wait for clk_period;
+        assert control_signals_out.pc_write = false;
+        wait for clk_period/2;
         wait;
     end process;
 end;

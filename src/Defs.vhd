@@ -100,13 +100,15 @@ begin
         when "000111" =>
             return bezqube;
         when "001000" =>
-            return str;
-        when "001001" =>
             return ldr;
+        when "001001" =>
+            return str;
         when "001010" =>
-            return strp;
-        when "001011" =>
             return ldrp;
+        when "001011" =>
+            return strp;
+        when "001100" =>
+            return beq;
         when others =>
             return nop;
     end case;
