@@ -9,9 +9,8 @@ entity VECTOR3K is
         DATA_WIDTH : integer := 32;
         SRAM_ADDR_WIDTH : integer := 19;
         SRAM_DATA_WIDTH : integer := 16;
-        PRIMITIVE_WIDTH : integer := 136;
-        SCENE_MEM_ADDR_WIDTH : integer := 8
-
+        PRIM_WIDTH : integer := 136;
+        SCENE_MEM_ADDR_WIDTH : integer := 10
     );
     port (
         clk, reset              : in std_logic;
@@ -41,9 +40,9 @@ architecture Behavior of VECTOR3K is
 
     -- Core signals
     signal proc_imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
-    signal proc_scene_mem_write_data : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0) := (others => '0');
+    signal proc_scene_mem_write_data : std_logic_vector(PRIM_WIDTH-1 downto 0) := (others => '0');
     signal proc_scene_mem_addr : std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0) := (others => '0');
-    signal proc_scene_mem_read_data : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0) := (others => '0');
+    signal proc_scene_mem_read_data : std_logic_vector(PRIM_WIDTH-1 downto 0) := (others => '0');
     signal proc_scene_mem_we : std_logic := '0';
 begin
     if_inst: entity work.instruction_fetch
@@ -87,7 +86,7 @@ begin
             ADDR_WIDTH => SRAM_ADDR_WIDTH,
             DATA_WIDTH => DATA_WIDTH,
             INSTR_WIDTH => INSTR_WIDTH,
-            PRIMITIVE_WIDTH => PRIMITIVE_WIDTH,
+            PRIM_WIDTH => PRIM_WIDTH,
             SCENE_MEM_ADDR_WIDTH => SCENE_MEM_ADDR_WIDTH
         ) 
         port map (

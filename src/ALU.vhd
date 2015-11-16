@@ -11,7 +11,6 @@ entity ALU is
         PRIM_WIDTH : integer := 136
     );
     port ( 
-        clk: in STD_LOGIC;
         read_data_1 : in std_logic_vector(DATA_WIDTH-1 downto 0);
         read_data_2 : in std_logic_vector(DATA_WIDTH-1 downto 0);
         read_data_3 : in std_logic_vector(DATA_WIDTH-1 downto 0);
@@ -20,7 +19,7 @@ entity ALU is
         instruction : in instruction_t;
         op : in op_t;
         zero : out std_logic;
-        alu_result : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        alu_result_out : out std_logic_vector(DATA_WIDTH-1 downto 0);
         prim_result : out std_logic_vector(PRIM_WIDTH-1 downto 0);
         alu_source_a : in alu_source_t;
         alu_source_b : in alu_source_t
@@ -29,11 +28,12 @@ end ALU;
 
 architecture Behavioral of ALU is
     type Operation_t is (ALU_ADD, ALU_SUB, ALU_SLT, ALU_AND, ALU_OR, ALU_A, ALU_B, ALU_SL16);
+    signal alu_result : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
 begin
 
-    alu_perform_op: process(operation, read_data_1, read_data_2, instruction, ALUSrc)
-        variable operatorA: std_logic_vector (DATA_WIDTH-1 downto 0);
-        variable operatorB: std_logic_vector (DATA_WIDTH-1 downto 0);
+    alu_perform_op: process(op, read_data_1, read_data_2, read_data_3, read_data_4, read_data_5, instruction, alu_source_a, alu_source_b)
+        variable operatorA: std_logic_vector(DATA_WIDTH-1 downto 0);
+        variable operatorB: std_logic_vector(DATA_WIDTH-1 downto 0);
     begin
 
         if alu_source_a = REG1 then
@@ -79,14 +79,17 @@ begin
                 alu_result <= std_logic_vector(signed(operatorA) - signed(operatorB));
                 prim_result <= (others => '0');
             when lsl =>
-                alu_result <= operatorA sll to_integer(signed(operatorB));
+                alu_result <= std_logic_vector(unsigned(operatorA) sll to_integer(signed(operatorB)));
                 prim_result <= (others => '0');
             when line =>
-                prim_result <= (135 downto 128 => "00000000", 127 downto 96 => read_data_2, 95 downto 64 => read_data_3, others => '0');
+                alu_result <= (others => '0');
+                prim_result <= x"00" & read_data_2 & read_data_3 & x"0000000000000000";
             when bezquad =>
-                prim_result <= (135 downto 128 => "00000001", 127 downto 96 => read_data_2, 95 downto 64 => read_data_3, 63 downto 32 => read_data_4, others => '0');
+                alu_result <= (others => '0');
+                prim_result <= x"01" & read_data_2 & read_data_3 & read_data_4 & x"00000000";
             when bezqube =>
-                prim_result <= (135 downto 128 => "00000010", 127 downto 96 => read_data_2, 95 downto 64 => read_data_3, 63 downto 32 => read_data_4, 31 downto 0 => read_data_5);
+                alu_result <= (others => '0');
+                prim_result <= x"02" & read_data_2 & read_data_3 & read_data_4 & read_data_5;
             when others=>
                 alu_result <= (others => '0');
                 prim_result <= (others => '0');
@@ -101,6 +104,8 @@ begin
             Zero <= '0';
         end if;
     end process;
+
+    alu_result_out <= alu_result;
 
 end Behavioral;
 

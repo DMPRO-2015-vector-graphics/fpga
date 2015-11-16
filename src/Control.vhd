@@ -2,11 +2,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.Defs.all;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values                  
---use IEEE.NUMERIC_STD.ALL;
-
-
 entity Control is
     generic (
         INSTR_WIDTH : integer := 32;
@@ -50,7 +45,16 @@ begin
     begin
         if state = S_FETCH then
             control_signals_out.reg_write <= false;
+            control_signals_out.prim_reg_write <= false;
+            control_signals_out.mem_to_reg <= FROM_ALU;
+            control_signals_out.prim_mem_to_reg <= FROM_ALU;
+            control_signals_out.reg_dest <= REG1;
+            control_signals_out.prim_mem_write <= false;
             control_signals_out.mem_write <= false;
+            control_signals_out.alu_source_a <= REG1;
+            control_signals_out.alu_source_b <= REG1;
+            control_signals_out.branch <= false;
+            control_signals_out.jump <= false;
         elsif state = S_EXECUTE then
             control_signals_out.op <= get_op(instruction.opcode);
             case get_op(instruction.opcode) is
@@ -58,7 +62,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -68,7 +74,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -78,7 +86,9 @@ begin
                     control_signals_out.reg_write <= true;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG2;
                     control_signals_out.alu_source_b <= REG3;
@@ -88,7 +98,9 @@ begin
                     control_signals_out.reg_write <= true;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= IMM;
                     control_signals_out.alu_source_b <= REG1;
@@ -98,7 +110,9 @@ begin
                     control_signals_out.reg_write <= true;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG2;
                     control_signals_out.alu_source_b <= IMM;
@@ -108,7 +122,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= true;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -118,7 +134,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= true;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -128,7 +146,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= true;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -138,7 +158,9 @@ begin
                     control_signals_out.reg_write <= true;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_MEM;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -148,7 +170,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= true;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -158,7 +182,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= true;
                     control_signals_out.mem_to_reg <= FROM_MEM;
+                    control_signals_out.prim_mem_to_reg <= FROM_MEM;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -168,7 +194,9 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= true;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG1;
@@ -178,19 +206,41 @@ begin
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
                     control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
                     control_signals_out.alu_source_a <= REG1;
                     control_signals_out.alu_source_b <= REG2;
                     control_signals_out.branch <= true;
                     control_signals_out.jump <= false;
                 when others =>
-                    null;
+                    control_signals_out.reg_write <= false;
+                    control_signals_out.prim_reg_write <= false;
+                    control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
+                    control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
+                    control_signals_out.mem_write <= false;
+                    control_signals_out.alu_source_a <= REG1;
+                    control_signals_out.alu_source_b <= REG1;
+                    control_signals_out.branch <= false;
+                    control_signals_out.jump <= false;
             end case;
         elsif state = S_STALL then
-            null;
+           null; 
         else
-            null;
+            control_signals_out.reg_write <= false;
+            control_signals_out.prim_reg_write <= false;
+            control_signals_out.mem_to_reg <= FROM_ALU;
+            control_signals_out.prim_mem_to_reg <= FROM_ALU;
+            control_signals_out.reg_dest <= REG1;
+            control_signals_out.prim_mem_write <= false;
+            control_signals_out.mem_write <= false;
+            control_signals_out.alu_source_a <= REG1;
+            control_signals_out.alu_source_b <= REG1;
+            control_signals_out.branch <= false;
+            control_signals_out.jump <= false;
         end if;
     end process;
 end Behavioral;

@@ -43,7 +43,9 @@ package Defs is
             reg_write : reg_write_t;
             prim_reg_write : reg_write_t;
             mem_to_reg : mem_to_reg_t;
+            prim_mem_to_reg : mem_to_reg_t;
             reg_dest : reg_dest_t;
+            prim_mem_write : mem_write_t;
             mem_write : mem_write_t;
             alu_source_a : alu_source_t;
             alu_source_b : alu_source_t;
@@ -61,6 +63,7 @@ package Defs is
     function vec_string_5b(v: std_logic_vector(4 downto 0)) return string;
     function op_string(op: op_t) return string;
     function bool_string(b: boolean) return string;
+    function to_std_logic(b: boolean) return std_logic;
 end package Defs;
 
 
@@ -118,5 +121,13 @@ function vec_string(v: std_logic_vector(31 downto 0)) return string is begin ret
 function vec_string_5b(v: std_logic_vector(4 downto 0)) return string is begin return integer'image(to_integer(unsigned(v))); end vec_string_5b;
 function op_string(op: op_t) return string is begin return op_t'image(op); end op_string;
 function bool_string(b: boolean) return string is begin return boolean'image(b); end bool_string;
+function to_std_logic(b: boolean) return std_logic is
+begin
+    if b = true then
+        return('1');
+    else 
+        return ('0'); 
+    end if;
+end to_std_logic;
 
 end Defs;

@@ -24,7 +24,7 @@ ARCHITECTURE behavior OF tb_ALU IS
 
     --Outputs
     signal zero : std_logic;
-    signal alu_result : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal alu_result_out : std_logic_vector(DATA_WIDTH-1 downto 0);
     signal prim_result : std_logic_vector(PRIMITIVE_WIDTH-1 downto 0);
 
     -- Clock period definitions
@@ -42,7 +42,7 @@ BEGIN
         instruction => instruction,
         op => op,
         zero => zero,
-        alu_result => alu_result,
+        alu_result_out => alu_result_out,
         prim_result => prim_result,
         alu_source_a => alu_source_a,
         alu_source_b => alu_source_b
@@ -64,11 +64,25 @@ BEGIN
         -- hold reset state for 100 ns.
         wait for clk_period/2;	
 
-        
-
+        -- mov
+        report "MOV";
+        instruction <= make_instruction(x"08201234");
+        op <= mov;
+        alu_source_a <= IMM;
+        alu_source_b <= REG1;
+        wait for clk_period/2;
+        assert alu_result_out = x"00001234";
+        assert prim_result = (others => '0');
+        wait for clk_period/2;
+        instruction <= make_instruction(x"14011000");
+        read_data_2 <= x"00000000";
+        read_data_3 <= x"FFFFFFFF";
+        op <= line;
+        wait for clk_period/2;
+        assert alu_result_out = (others => '0');
+        assert prim_result = x"0000000000FFFFFFFF0000000000000000";
         report "ALU test complete";
 
         wait;
     end process;
-
 END;

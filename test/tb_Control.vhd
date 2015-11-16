@@ -50,7 +50,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -68,7 +70,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -86,7 +90,9 @@ begin
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG2;
         assert control_signals_out.alu_source_b = REG3;
@@ -104,7 +110,9 @@ begin
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = IMM;
         assert control_signals_out.alu_source_b = REG1;
@@ -122,7 +130,9 @@ begin
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG2;
         assert control_signals_out.alu_source_b = IMM;
@@ -140,7 +150,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -158,7 +170,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -176,7 +190,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -194,7 +210,9 @@ begin
         assert control_signals_out.reg_write = true;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_MEM;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -213,7 +231,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = true;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -231,8 +251,10 @@ begin
         wait for clk_period/2;
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = true;
-        assert control_signals_out.mem_to_reg = FROM_MEM;
+        assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_MEM;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -251,7 +273,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = true;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG1;
@@ -270,7 +294,9 @@ begin
         assert control_signals_out.reg_write = false;
         assert control_signals_out.prim_reg_write = false;
         assert control_signals_out.mem_to_reg = FROM_ALU;
+        assert control_signals_out.prim_mem_to_reg = FROM_ALU;
         assert control_signals_out.reg_dest = REG1;
+        assert control_signals_out.prim_mem_write = false;
         assert control_signals_out.mem_write = false;
         assert control_signals_out.alu_source_a = REG1;
         assert control_signals_out.alu_source_b = REG2;

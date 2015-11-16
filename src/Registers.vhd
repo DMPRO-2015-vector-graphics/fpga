@@ -38,12 +38,12 @@ begin
                     reg_file(to_integer(unsigned(reg_1))) <= alu_result;
                 elsif reg_dest = REG2 then
                     reg_file(to_integer(unsigned(reg_2))) <= alu_result;
-                elsif reg_dest = REG3 then
-                    reg_file(to_integer(unsigned(reg_3))) <= alu_result;
-                elsif reg_dest = REG4 then
-                    reg_file(to_integer(unsigned(reg_4))) <= alu_result;
-                elsif reg_dest = REG5 then
-                    reg_file(to_integer(unsigned(reg_5))) <= alu_result;
+                --elsif reg_dest = REG3 then
+                --    reg_file(to_integer(unsigned(reg_3))) <= alu_result;
+                --elsif reg_dest = REG4 then
+                --    reg_file(to_integer(unsigned(reg_4))) <= alu_result;
+                --elsif reg_dest = REG5 then
+                --    reg_file(to_integer(unsigned(reg_5))) <= alu_result;
                 else
                     reg_file(to_integer(unsigned(reg_1))) <= alu_result;
                 end if;
