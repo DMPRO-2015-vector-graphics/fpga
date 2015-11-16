@@ -86,7 +86,7 @@ begin
             when bezquad =>
                 prim_result <= (135 downto 128 => "00000001", 127 downto 96 => read_data_2, 95 downto 64 => read_data_3, 63 downto 32 => read_data_4, others => '0');
             when bezqube =>
-                prim_result <= (135 downto 128 => "00000001", 127 downto 96 => read_data_2, 95 downto 64 => read_data_3, 63 downto 32 => read_data_4, 31 downto 0 => read_data_5);
+                prim_result <= (135 downto 128 => "00000010", 127 downto 96 => read_data_2, 95 downto 64 => read_data_3, 63 downto 32 => read_data_4, 31 downto 0 => read_data_5);
             when others=>
                 alu_result <= (others => '0');
                 prim_result <= (others => '0');
