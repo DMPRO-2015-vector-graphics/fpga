@@ -14,7 +14,7 @@ entity Registers is
         reg_dest                          : in reg_dest_t;
         reg_write                         : in reg_write_t;
         mem_to_reg                        : in mem_to_reg_t;
-        ALUResult                         : in std_logic_vector(DATA_WIDTH-1 downto 0);
+        alu_result                         : in std_logic_vector(DATA_WIDTH-1 downto 0);
         read_data_1,
         read_data_2,
         read_data_3,
@@ -25,36 +25,36 @@ end Registers;
 
 architecture Behavioral of Registers is
     type RegisterFileType is array(0 to 2**ADDR_WIDTH-1) of std_logic_vector(DATA_WIDTH-1 downto 0);
-    signal regFile : RegisterFileType;
+    signal reg_file : RegisterFileType;
 begin
     
     update: process (clk, reset)
     begin
         if reset = '1' then
-            regFile <= (others => (others => '0'));
+            reg_file <= (others => (others => '0'));
         elsif rising_edge(clk) then
             if reg_write = true then
                 if reg_dest = REG1 then
-                    regFile(to_integer(unsigned(reg_1))) <= ALUResult;
+                    reg_file(to_integer(unsigned(reg_1))) <= alu_result;
                 elsif reg_dest = REG2 then
-                    regFile(to_integer(unsigned(reg_2))) <= ALUResult;
+                    reg_file(to_integer(unsigned(reg_2))) <= alu_result;
                 elsif reg_dest = REG3 then
-                    regFile(to_integer(unsigned(reg_3))) <= ALUResult;
+                    reg_file(to_integer(unsigned(reg_3))) <= alu_result;
                 elsif reg_dest = REG4 then
-                    regFile(to_integer(unsigned(reg_4))) <= ALUResult;
+                    reg_file(to_integer(unsigned(reg_4))) <= alu_result;
                 elsif reg_dest = REG5 then
-                    regFile(to_integer(unsigned(reg_5))) <= ALUResult;
+                    reg_file(to_integer(unsigned(reg_5))) <= alu_result;
                 else
-                    regFile(to_integer(unsigned(reg_1))) <= ALUResult;
+                    reg_file(to_integer(unsigned(reg_1))) <= alu_result;
                 end if;
             end if;
         end if;
     end process;
 
-    read_data_1 <= regFile(to_integer(unsigned(reg_1)));
-    read_data_2 <= regFile(to_integer(unsigned(reg_2)));
-    read_data_3 <= regFile(to_integer(unsigned(reg_3)));
-    read_data_4 <= regFile(to_integer(unsigned(reg_4)));
-    read_data_5 <= regFile(to_integer(unsigned(reg_5)));
+    read_data_1 <= reg_file(to_integer(unsigned(reg_1)));
+    read_data_2 <= reg_file(to_integer(unsigned(reg_2)));
+    read_data_3 <= reg_file(to_integer(unsigned(reg_3)));
+    read_data_4 <= reg_file(to_integer(unsigned(reg_4)));
+    read_data_5 <= reg_file(to_integer(unsigned(reg_5)));
 end Behavioral;
 

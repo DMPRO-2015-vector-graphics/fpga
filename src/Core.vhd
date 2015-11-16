@@ -38,7 +38,7 @@ architecture MultiCycle of Core is
            read_data_5 : std_logic_vector(DATA_WIDTH-1 downto 0);
     -- ALU out signals
     signal Zero : std_logic; 
-    signal ALUResult : std_logic_vector(DATA_WIDTH-1 downto 0);
+    signal alu_result : std_logic_vector(DATA_WIDTH-1 downto 0);
     -- Control out signals
     signal control_signals : control_signals_t;
 begin
@@ -84,7 +84,7 @@ begin
         reg_4 => instruction.reg4,
         reg_5 => instruction.reg5,
         reg_dest => control_signals.reg_dest,
-        ALUResult => ALUResult,
+        alu_result => alu_result,
         mem_to_reg => control_signals.mem_to_reg,
         reg_write => control_signals.reg_write,
         read_data_1 => read_data_1,
@@ -94,24 +94,27 @@ begin
         read_data_5 => read_data_5
     );
 
-    --alu: entity work.ALU
-    --generic map(
-    --    DATA_WIDTH => DATA_WIDTH,
-    --    ADDR_WIDTH => ADDR_WIDTH,
-    --    INSTR_WIDTH => INSTR_WIDTH
-    --)
-    --port map(
-    --    clk => clk,
-    --    read_data_1 => read_data_1,
-    --    read_data_2 => read_data_2,
-    --    read_data_3 => read_data_3,
-    --    read_data_4 => read_data_4,
-    --    instruction => imem_data_in,
-    --    op => control_signals.op,
-    --    Zero => Zero,
-    --    ALUResult => ALUResult,
-    --    ALUSrc => control_signals.ALU_source
-    --);
+    alu: entity work.ALU
+    generic map(
+        DATA_WIDTH => DATA_WIDTH,
+        ADDR_WIDTH => ADDR_WIDTH,
+        INSTR_WIDTH => INSTR_WIDTH,
+        PRIMITIVE_WIDTH => PRIMITIVE_WIDTH
+    )
+    port map(
+        clk => clk,
+        read_data_1 => read_data_1,
+        read_data_2 => read_data_2,
+        read_data_3 => read_data_3,
+        read_data_4 => read_data_4,
+        read_data_5 => read_data_5,
+        instruction => instruction,
+        op => control_signals.op,
+        Zero => Zero,
+        alu_result => alu_result,
+        alu_source_a => control_signals.alu_source_a,
+        alu_source_b => control_signals.alu_source_b
+    );
 
     -- IMEM
     imem_address <= program_counter_val;
