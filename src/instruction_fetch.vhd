@@ -15,15 +15,15 @@ entity instruction_fetch is
            instruction : out  STD_LOGIC_VECTOR (INSTR_WIDTH-1 downto 0);
            valid : out STD_LOGIC;
            sram_addr : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
-           sram_data : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
+           sram_data : in std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
            sram_wen : out std_logic;
            sram_ren : out std_logic
        );
 end instruction_fetch;
 
 architecture Behavioral of instruction_fetch is
-    type fetch_states is (low, high, rst);
-    signal state : fetch_states := rst;
+    type fetch_states is (low, high);
+    signal state : fetch_states := high;
     signal temp : STD_LOGIC_VECTOR(SRAM_DATA_WIDTH-1 downto 0) := (others => '0');
     signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
     signal instr : STD_LOGIC_VECTOR(INSTR_WIDTH-1 downto 0) := (others => '0');
@@ -49,14 +49,12 @@ begin
     begin
         if(reset = '1') then
             instruction <= (others => '0');
-            state <= rst;
+            state <= high;
+            addr <= address;
+            high_valid <= '0';
+            low_valid <= '0';
         elsif(rising_edge(clk)) then
             case state is
-                when rst =>
-                    addr <= address;
-                    high_valid <= '0';
-                    low_valid <= '0';
-                    state <= low;
                 when low =>
                     instr(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
                     addr <= std_logic_vector(unsigned(addr) + 2);
@@ -64,12 +62,12 @@ begin
                     low_valid <= '1';
                 when high =>
                     instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 2);
+                    addr <= std_logic_vector(unsigned(addr) +2);
                     state <= low;
                     high_valid <= '1';
                     instruction <= instr;
             end case;
-        end if;
+        end if;	  
         valid <= low_valid and high_valid;
     end process;
 

@@ -54,7 +54,7 @@ begin
         )
         port map (
             clk => clk,
-            reset => reset_if,
+            reset => reset_if or reset,
             address => proc_imem_address,
             instruction => instruction,
             valid => instr_valid,

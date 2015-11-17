@@ -18,38 +18,38 @@ entity Control is
 end Control;
 
 architecture Behavioral of Control is
-    signal state : state_t := S_FETCH_1;
+    signal state : state_t := S_OFFLINE;
 begin
 
     state_transitions: process(clk, reset, processor_enable)
     begin
         if reset = '1' or processor_enable = '0' then
-            state <= S_FETCH_1;
+            state <= S_OFFLINE;
         elsif rising_edge(clk) then
             control_signals_out.pc_write <= false;
             reset_if <= '0';
-            if state = S_FETCH_1 then
-                state <= S_FETCH_2;
-            elsif state = S_FETCH_2 then
+            if state = S_OFFLINE then
+                state <= S_FETCH_1;
+            elsif state = S_FETCH_1 then
                 control_signals_out.pc_write <= true;
                 state <= S_EXECUTE;
             elsif state = S_EXECUTE then
-                if get_op(opcode) = str or get_op(opcode) = ldr or get_op(opcode) = ldrp or get_op(opcode) = strp then
+                if get_op(opcode) = ldr or get_op(opcode) = ldrp or get_op(opcode) = beq or get_op(opcode) = jmp then
+                    reset_if <= '1';
                     state <= S_STALL;
                 else
-                    reset_if <= '1';
                     state <= S_FETCH_1;
                 end if;
             else
-                reset_if <= '1';
+                reset_if <= '0';
                 state <= S_FETCH_1;
             end if;
         end if;
     end process;
 
-    update: process(state)
+    update: process(state, opcode)
     begin
-        if state = S_FETCH_1 or state = S_FETCH_2 then
+        if state = S_FETCH_1 then
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
             control_signals_out.mem_to_reg <= FROM_ALU;

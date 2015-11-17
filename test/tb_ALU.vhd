@@ -57,7 +57,6 @@ BEGIN
         wait for clk_period/2;
     end process;
 
-
     -- Stimulus process
     stim_proc: process
     begin		
@@ -80,7 +79,7 @@ BEGIN
         op <= line;
         wait for clk_period/2;
         assert alu_result_out = (others => '0');
-        assert prim_result = x"0000000000FFFFFFFF0000000000000000";
+        assert prim_result = x"0100000000FFFFFFFF0000000000000000";
         report "ALU test complete";
 
         wait;

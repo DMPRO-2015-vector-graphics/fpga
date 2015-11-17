@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="./isim.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="defs" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="tb_core" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/tb_core/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/core_inst/reset_if" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset_if</obj_property>
+      <obj_property name="ObjectShortName">reset_if</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/core_inst/control/state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">state</obj_property>
+      <obj_property name="ObjectShortName">state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/if_inst/state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">state</obj_property>
+      <obj_property name="ObjectShortName">state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/sram_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sram_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">sram_data[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/core_inst/imem_data_in" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">imem_data_in[31:0]</obj_property>
+      <obj_property name="ObjectShortName">imem_data_in[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/core_inst/control_signals" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">control_signals</obj_property>
+      <obj_property name="ObjectShortName">control_signals</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/sram_addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sram_addr[18:0]</obj_property>
+      <obj_property name="ObjectShortName">sram_addr[18:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/scene_mem_data_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">scene_mem_data_out[135:0]</obj_property>
+      <obj_property name="ObjectShortName">scene_mem_data_out[135:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+</wave_config>

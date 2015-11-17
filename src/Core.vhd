@@ -9,7 +9,7 @@ entity Core is
         DATA_WIDTH : integer := 32;
         ADDR_WIDTH : integer := 19;
         PRIM_WIDTH : integer := 136;
-        SCENE_MEM_ADDR_WIDTH : integer := 8
+        SCENE_MEM_ADDR_WIDTH : integer := 10
     );
     port (
         clk, reset 			: in std_logic;
