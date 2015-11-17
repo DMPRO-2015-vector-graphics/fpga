@@ -63,12 +63,12 @@ ENTITY SceneMem IS
 	port (
 	clka: in std_logic;
 	wea: in std_logic_vector(0 downto 0);
-	addra: in std_logic_vector(7 downto 0);
+	addra: in std_logic_vector(9 downto 0);
 	dina: in std_logic_vector(135 downto 0);
 	douta: out std_logic_vector(135 downto 0);
 	clkb: in std_logic;
 	web: in std_logic_vector(0 downto 0);
-	addrb: in std_logic_vector(7 downto 0);
+	addrb: in std_logic_vector(9 downto 0);
 	dinb: in std_logic_vector(135 downto 0);
 	doutb: out std_logic_vector(135 downto 0));
 END SceneMem;
@@ -79,12 +79,12 @@ component wrapped_SceneMem
 	port (
 	clka: in std_logic;
 	wea: in std_logic_vector(0 downto 0);
-	addra: in std_logic_vector(7 downto 0);
+	addra: in std_logic_vector(9 downto 0);
 	dina: in std_logic_vector(135 downto 0);
 	douta: out std_logic_vector(135 downto 0);
 	clkb: in std_logic;
 	web: in std_logic_vector(0 downto 0);
-	addrb: in std_logic_vector(7 downto 0);
+	addrb: in std_logic_vector(9 downto 0);
 	dinb: in std_logic_vector(135 downto 0);
 	doutb: out std_logic_vector(135 downto 0));
 end component;
@@ -102,7 +102,7 @@ end component;
 			c_prim_type => 1,
 			c_read_width_b => 136,
 			c_initb_val => "0",
-			c_family => "virtex5",
+			c_family => "spartan6",
 			c_read_width_a => 136,
 			c_disable_warn_bhv_coll => 0,
 			c_use_softecc => 0,
@@ -114,25 +114,25 @@ end component;
 			c_has_mem_output_regs_b => 0,
 			c_has_mem_output_regs_a => 0,
 			c_load_init_file => 0,
-			c_xdevicefamily => "virtex5",
-			c_write_depth_b => 256,
-			c_write_depth_a => 256,
+			c_xdevicefamily => "spartan6",
+			c_write_depth_b => 1024,
+			c_write_depth_a => 1024,
 			c_has_rstb => 0,
 			c_has_rsta => 0,
 			c_has_mux_output_regs_b => 0,
 			c_inita_val => "0",
 			c_has_mux_output_regs_a => 0,
-			c_addra_width => 8,
+			c_addra_width => 10,
 			c_has_softecc_input_regs_a => 0,
-			c_addrb_width => 8,
+			c_addrb_width => 10,
 			c_default_data => "0",
 			c_use_ecc => 0,
 			c_algorithm => 1,
 			c_disable_warn_bhv_range => 0,
 			c_write_width_b => 136,
 			c_write_width_a => 136,
-			c_read_depth_b => 256,
-			c_read_depth_a => 256,
+			c_read_depth_b => 1024,
+			c_read_depth_a => 1024,
 			c_byte_size => 9,
 			c_sim_collision_check => "ALL",
 			c_common_clk => 0,

@@ -100,7 +100,6 @@ ${TRANSLATE_OUT}: ${SYNTH_OUT} ${CONSTRAINT_FILES} ${IP_NETLISTS}
 	cd ${WORK_DIR} && \
 	cp ${SYNTH_OUT} ${IP_NETLISTS} . && \
 	${NGDBUILD} -intstyle ise -dd _ngo -sd src/framework -nt timestamp $(addprefix -uc ,${CONSTRAINT_FILES})  -p xc6slx45-csg324-2 ${TOP_NAME}.ngc ${TOP_NAME}.ngd && \
-           dac_sync : out  STD_LOGIC;
 	cp -v $(notdir $@) $(dir $@)
 
 
@@ -140,8 +139,9 @@ ${TOP_NAME}.prj: $(patsubst %.xco,%.vhd,${SUPPORT_SRC} ${STUDENT_SRC})
 %.vhd %.ngc: %.xco
 	@echo "Generating IP core from description file \"$*\""
 	@. /opt/Xilinx/12.4/ISE_DS/ISE/settings32.sh && \
+	cp -v src/coregen.cgp work/coregen.cgp && \
 	cd ${WORK_DIR} && \
-	${COREGEN} -r -b $< && pwd && \
+	${COREGEN} -p ./coregen.cgp -r -b $< && \
 	cp -v $$(basename $*).vhd $$(basename $*).ngc $(dir $@)
 
 .PHONY: clean
