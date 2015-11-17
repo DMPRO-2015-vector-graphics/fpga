@@ -13,7 +13,8 @@ entity ProgramCounter is
         jump                : in jump_t;
         branch              : in branch_t; 
         zero                : in std_logic;
-        instruction         : in instruction_t;
+        target              : in target_t;
+        immediate           : in immediate_t;
         address_out         : out std_logic_vector(ADDR_WIDTH - 1 downto 0)
     );
 end ProgramCounter;
@@ -27,10 +28,10 @@ begin
             address <= (others => '0');
         elsif rising_edge(clk) and pc_write = true then
             if jump = true then
-                address <= instruction.target;
+                address <= target;
             else
                 if branch = true and zero = '1' then
-                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(instruction.immediate));
+                    address <= std_logic_vector(unsigned(address) + 1 + unsigned(immediate));
                 else
                     address <= std_logic_vector(unsigned(address) + 1);
                 end if;

@@ -39,6 +39,7 @@ architecture Behavior of VECTOR3K is
     signal instruction : std_logic_vector(INSTR_WIDTH-1 downto 0) := (others => '0');
 
     -- Core signals
+    signal reset_if : std_logic;
     signal proc_imem_address : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
     signal proc_scene_mem_write_data : std_logic_vector(PRIM_WIDTH-1 downto 0) := (others => '0');
     signal proc_scene_mem_addr : std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0) := (others => '0');
@@ -53,7 +54,7 @@ begin
         )
         port map (
             clk => clk,
-            reset => reset,
+            reset => reset_if,
             address => proc_imem_address,
             instruction => instruction,
             valid => instr_valid,
@@ -93,6 +94,7 @@ begin
             clk => clk,
             reset => reset,
             processor_enable    => fpga_cs,
+            reset_if            => reset_if,
             -- instruction memory connection
             imem_data_in        => instruction,
             imem_address        => proc_imem_address,

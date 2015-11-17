@@ -11,39 +11,45 @@ entity Control is
         clk                 : in std_logic;
         reset               : in std_logic;
         processor_enable    : in std_logic;
-        instruction         : in instruction_t;
-        control_signals_out : out control_signals_t
+        opcode              : in opcode_t;
+        control_signals_out : out control_signals_t;
+        reset_if            : out std_logic
     );
 end Control;
 
 architecture Behavioral of Control is
-    signal state : state_t := S_FETCH;
+    signal state : state_t := S_FETCH_1;
 begin
 
     state_transitions: process(clk, reset, processor_enable)
     begin
         if reset = '1' or processor_enable = '0' then
-            state <= S_FETCH;
+            state <= S_FETCH_1;
         elsif rising_edge(clk) then
             control_signals_out.pc_write <= false;
-            if state = S_FETCH then
+            reset_if <= '0';
+            if state = S_FETCH_1 then
+                state <= S_FETCH_2;
+            elsif state = S_FETCH_2 then
                 control_signals_out.pc_write <= true;
                 state <= S_EXECUTE;
             elsif state = S_EXECUTE then
-                if get_op(instruction.opcode) = str or get_op(instruction.opcode) = ldr or get_op(instruction.opcode) = ldrp or get_op(instruction.opcode) = strp then
+                if get_op(opcode) = str or get_op(opcode) = ldr or get_op(opcode) = ldrp or get_op(opcode) = strp then
                     state <= S_STALL;
                 else
-                    state <= S_FETCH;
+                    reset_if <= '1';
+                    state <= S_FETCH_1;
                 end if;
             else
-                state <= S_FETCH;
+                reset_if <= '1';
+                state <= S_FETCH_1;
             end if;
         end if;
     end process;
 
     update: process(state)
     begin
-        if state = S_FETCH then
+        if state = S_FETCH_1 or state = S_FETCH_2 then
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
             control_signals_out.mem_to_reg <= FROM_ALU;
@@ -56,8 +62,8 @@ begin
             control_signals_out.branch <= false;
             control_signals_out.jump <= false;
         elsif state = S_EXECUTE then
-            control_signals_out.op <= get_op(instruction.opcode);
-            case get_op(instruction.opcode) is
+            control_signals_out.op <= get_op(opcode);
+            case get_op(opcode) is
                 when nop => 
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;

@@ -14,6 +14,7 @@ entity Core is
     port (
         clk, reset 			: in std_logic;
         processor_enable		: in std_logic;
+        reset_if                        : out std_logic;
         -- IMEM
         imem_data_in			: in std_logic_vector(INSTR_WIDTH-1 downto 0);
         imem_address			: out std_logic_vector(ADDR_WIDTH-1 downto 0);
@@ -55,8 +56,9 @@ begin
         clk => clk,
         reset => reset,
         processor_enable => processor_enable,
-        instruction => instruction,
-        control_signals_out => control_signals
+        opcode => instruction.opcode,
+        control_signals_out => control_signals,
+        reset_if => reset_if
     );
 
     program_counter: entity work.ProgramCounter
@@ -69,7 +71,8 @@ begin
        jump => control_signals.jump,
        branch => control_signals.branch,
        zero => zero,
-       instruction => instruction,
+       target => instruction.target,
+       immediate => instruction.immediate,
        pc_write => control_signals.pc_write,
        address_out => program_counter_val
     );
@@ -110,7 +113,7 @@ begin
         read_data_3 => read_data_3,
         read_data_4 => read_data_4,
         read_data_5 => read_data_5,
-        instruction => instruction,
+        immediate => instruction.immediate,
         op => control_signals.op,
         Zero => Zero,
         alu_result_out => alu_result,

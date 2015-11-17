@@ -16,7 +16,7 @@ entity ALU is
         read_data_3 : in std_logic_vector(DATA_WIDTH-1 downto 0);
         read_data_4 : in std_logic_vector(DATA_WIDTH-1 downto 0);
         read_data_5 : in std_logic_vector(DATA_WIDTH-1 downto 0);
-        instruction : in instruction_t;
+        immediate : in immediate_t;
         op : in op_t;
         zero : out std_logic;
         alu_result_out : out std_logic_vector(DATA_WIDTH-1 downto 0);
@@ -31,7 +31,7 @@ architecture Behavioral of ALU is
     signal alu_result : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
 begin
 
-    alu_perform_op: process(op, read_data_1, read_data_2, read_data_3, read_data_4, read_data_5, instruction, alu_source_a, alu_source_b)
+    alu_perform_op: process(op, read_data_1, read_data_2, read_data_3, read_data_4, read_data_5, immediate, alu_source_a, alu_source_b)
         variable operatorA: std_logic_vector(DATA_WIDTH-1 downto 0);
         variable operatorB: std_logic_vector(DATA_WIDTH-1 downto 0);
     begin
@@ -47,7 +47,7 @@ begin
         elsif alu_source_a = REG5 then
             operatorA := read_data_5;
         elsif alu_source_a = IMM then
-            operatorA := std_logic_vector(resize(signed(instruction.immediate), 32));
+            operatorA := std_logic_vector(resize(signed(immediate), 32));
         else
             operatorA := read_data_1;
         end if;
@@ -63,7 +63,7 @@ begin
         elsif alu_source_b = REG5 then
             operatorB := read_data_5;
         elsif alu_source_b = IMM then
-            operatorB := std_logic_vector(resize(signed(instruction.immediate), 32));
+            operatorB := std_logic_vector(resize(signed(immediate), 32));
         else
             operatorB := read_data_1;
         end if;

@@ -23,58 +23,59 @@ end instruction_fetch;
 
 architecture Behavioral of instruction_fetch is
     type fetch_states is (low, high, rst);
-    signal state : fetch_states;
+    signal state : fetch_states := rst;
     signal temp : STD_LOGIC_VECTOR(SRAM_DATA_WIDTH-1 downto 0) := (others => '0');
     signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
     signal instr : STD_LOGIC_VECTOR(INSTR_WIDTH-1 downto 0) := (others => '0');
     signal low_valid : STD_LOGIC := '0';
     signal high_valid : STD_LOGIC := '0';
 begin
-    sram: entity work.sram
-    port map(
-                clk => clk,
-                -- Facing V3K
-                address => addr,
-                data_out => temp,
-                wr => '0',
-                data_in => (others => '0'),
-                -- Facing SRAM
-                we => sram_wen,
-                oe => sram_ren,
-                a => sram_addr,
-                io => sram_data
-            );
+    --sram: entity work.sram
+    --port map(
+    --            clk => clk,
+    --            -- Facing V3K
+    --            address => addr,
+    --            data_out => temp,
+    --            wr => '0',
+    --            data_in => (others => '0'),
+    --            -- Facing SRAM
+    --            we => sram_wen,
+    --            oe => sram_ren,
+    --            a => sram_addr,
+    --            io => sram_data
+    --        );
 
     process(clk, address, reset)
     begin
         if(reset = '1') then
             instruction <= (others => '0');
             state <= rst;
-        end if;
-        if(rising_edge(clk)) then
+        elsif(rising_edge(clk)) then
             case state is
                 when rst =>
                     addr <= address;
                     high_valid <= '0';
                     low_valid <= '0';
-                    if(reset = '0') then
-                        state <= low;
-                    end if;
+                    state <= low;
                 when low =>
-                    instr(SRAM_DATA_WIDTH-1 downto 0) <=  temp;
+                    instr(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
                     addr <= std_logic_vector(unsigned(addr) + 2);
                     state <= high;
                     low_valid <= '1';
                 when high =>
-                    instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= temp;
+                    instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
                     addr <= std_logic_vector(unsigned(addr) + 2);
                     state <= low;
                     high_valid <= '1';
                     instruction <= instr;
             end case;
-        end if;	  
+        end if;
         valid <= low_valid and high_valid;
     end process;
+
+    sram_addr <= addr;
+    sram_ren <= '0';
+    sram_wen <= '1';
 
 end Behavioral;
 
