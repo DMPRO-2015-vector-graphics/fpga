@@ -56,10 +56,10 @@ signal bez_p1 : STD_LOGIC_VECTOR(31 downto 0);
 signal bez_p2 : STD_LOGIC_VECTOR(31 downto 0);
 
 signal i : STD_LOGIC_VECTOR(10 downto 0) := (others => '0');
-signal t : STD_LOGIC_VECTOR(10 downto 0) := (others => '0');
-signal u : STD_LOGIC_VECTOR(10 downto 0) := (others => '0');
+signal t : STD_LOGIC_VECTOR(15 downto 0) := (others => '0');
+signal u : STD_LOGIC_VECTOR(15 downto 0) := (others => '0');
 signal a : STD_LOGIC_VECTOR(21 downto 0) := (others => '0');
-signal b : STD_LOGIC_VECTOR(43 downto 0) := (others => '0');
+signal b : STD_LOGIC_VECTOR(32 downto 0) := (others => '0');
 signal c : STD_LOGIC_VECTOR(21 downto 0) := (others => '0');
 
 TYPE POSSIBLE_STATES IS (waiting, updating, finished);
@@ -103,20 +103,21 @@ begin
 				  when updating =>
 				      done <= '0';
 						if dac_sync = '1' then
-							i <= std_logic_vector(unsigned(i) + 64);
-							t <= std_logic_vector(unsigned(i) sll 5);
-							u <= std_logic_vector((1024 - unsigned(i)) sll 5);
-							din <= temp_x(15 downto 0) & temp_y(15 downto 0);
-						else
-							a <= std_logic_vector((unsigned(u) * unsigned(u)) srl 15);
-							b <= std_logic_vector(((unsigned(t) * unsigned(u)) srl 15) * 2);
-							c <= std_logic_vector((unsigned(t) * unsigned(t)) srl 15);
-							
-							temp_x <= std_logic_vector(unsigned(a) * unsigned(bez_p0(31 downto 16)) + unsigned(b) * unsigned(bez_p1(31 downto 16)) + unsigned(c) * unsigned(bez_p2(31 downto 16)) srl 15);
-							temp_y <= std_logic_vector(unsigned(a) * unsigned(bez_p0(15 downto 0)) + unsigned(b) * unsigned(bez_p1(15 downto 0)) + unsigned(c) * unsigned(bez_p2(15 downto 0)) srl 15);				
+							i <= std_logic_vector(unsigned(i) + 64);			
+							din <= temp_x(59 downto 44) & temp_y(59 downto 44);
 						end if;
+						t <= i & "00000";
+						u <= std_logic_vector(1024 - unsigned(i)) & "00000";
 						
-						if unsigned(i) >= 1024 then
+						a <= std_logic_vector((unsigned(u) * unsigned(u)));
+						b <= std_logic_vector(((unsigned(t) * unsigned(u)))) & "0";
+						c <= std_logic_vector((unsigned(t) * unsigned(t)));
+						
+						temp_x <= std_logic_vector(((unsigned(a) * unsigned(bez_p0(31 downto 16))) + (unsigned(b) * unsigned(bez_p1(31 downto 16))) + (unsigned(c) * unsigned(bez_p2(31 downto 16)))));
+						temp_y <= std_logic_vector(((unsigned(a) * unsigned(bez_p0(15 downto 0))) + (unsigned(b) * unsigned(bez_p1(15 downto 0))) + (unsigned(c) * unsigned(bez_p2(15 downto 0)))));
+
+					
+						if unsigned(i) >= 1025 then
 							done <= '1';
 							state <= finished;
 						else
