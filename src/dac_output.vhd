@@ -19,10 +19,10 @@ signal piso_in : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
 
 --signal p1 : STD_LOGIC_VECTOR(31 downto 0) := x"40004000";
 signal p0 : STD_LOGIC_VECTOR(31 downto 0) := x"00000000";
-signal p1 : STD_LOGIC_VECTOR(31 downto 0) := x"40002000";
+signal p1 : STD_LOGIC_VECTOR(31 downto 0) := x"40001000";
 
 
-type draw_states is (draw_p1, draw_p2);--, draw_p3, draw_p4, draw_p5, draw_p6, draw_p7, draw_p8);
+type draw_states is (draw_p1, draw_p2, draw_p3);--, draw_p4, draw_p5, draw_p6, draw_p7, draw_p8);
 signal state : draw_states := draw_p1;
 
 signal clk48 : STD_LOGIC;
@@ -52,8 +52,8 @@ port map (
 ODDR2_inst : ODDR2
 port map (
     Q => dac_clk, -- 1-bit output data
-    C0 => clk20, -- 1-bit clock input
-    C1 => (not clk20), -- 1-bit clock input
+    C0 => clk10, -- 1-bit clock input
+    C1 => (not clk10), -- 1-bit clock input
     CE => '1',  -- 1-bit clock enable input
     D0 => '1',   -- 1-bit data input (associated with C0)
     D1 => '0',   -- 1-bit data input (associated with C1)
@@ -70,29 +70,35 @@ PORT MAP (
     sync => dac_sync,
     reset => '0',
     done => done,
-    clk => clk20
+    clk => clk10
 );
  
 vref_sleep <= '1';
-process(clk20, reset)
+process(clk10, reset)
 begin
     if(reset = '1') then
         state <= draw_p1;
         p0 <= x"00000000";
-        p1 <= x"40002000";
-    elsif rising_edge(clk20) then
+        p1 <= x"40001000";
+    elsif rising_edge(clk10) then
         case state is
             when draw_p1 =>
                 if done = '1' then
-                    p0 <= x"C0004000";
-                    p1 <= x"F0008000";
+                    p0 <= x"00000000";
+                    p1 <= x"FFFFFFFF";
                     state <= draw_p2;
                 end if;
-            when draw_p2 =>
+				when draw_p2 =>
+                if done = '1' then
+					     p0 <= x"00000000";
+                    p1 <= x"10004000";  
+                    state <= draw_p3;
+                end if;
+				when draw_p3 =>
                 if done = '1' then
                     p0 <= x"00000000";
-                    p1 <= x"40002000";
-                    state <= draw_p1;
+                    p1 <= x"40001000";
+                    state <= draw_p3;
                 end if;
         end case;    
     end if;
