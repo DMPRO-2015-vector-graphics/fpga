@@ -10,22 +10,22 @@ entity dac_output is
         ADDR_WIDTH : natural := 10
     );
     port ( 
-	    clk        : in  STD_LOGIC;
-		reset      : in  STD_LOGIC;
-		vref_sleep : out STD_LOGIC;
-		dac_clk    : out STD_LOGIC;
-		dac_sync   : out STD_LOGIC;
-		dac0_data  : out STD_LOGIC;
-		dac1_data  : out STD_LOGIC;
-		address    : out STD_LOGIC_VECTOR(ADDR_WIDTH-1 downto 0);
-		data       : in  STD_LOGIC_VECTOR(DATA_WIDTH-1 downto 0);
-		enable     : in  STD_LOGIC;
-		primitive_count : in  STD_LOGIC_VECTOR(ADDR_WIDTH-1 downto 0)
+        clk        : in  STD_LOGIC;
+        reset      : in  STD_LOGIC;
+        vref_sleep : out STD_LOGIC;
+        dac_clk    : out STD_LOGIC;
+        dac_sync   : out STD_LOGIC;
+        dac0_data  : out STD_LOGIC;
+        dac1_data  : out STD_LOGIC;
+        address    : out STD_LOGIC_VECTOR(ADDR_WIDTH-1 downto 0);
+        data       : in  STD_LOGIC_VECTOR(DATA_WIDTH-1 downto 0);
+        enable     : in  STD_LOGIC;
+        primitive_count : in  STD_LOGIC_VECTOR(ADDR_WIDTH-1 downto 0)
     );
 end dac_output;
 
 architecture Behavioral of dac_output is
-type output_states is (fetch, decode, draw);
+type output_states is (fetch, decode, draw, waiting);
 
 signal state : output_states := fetch;
 signal done   : STD_LOGIC;
@@ -40,8 +40,8 @@ signal p2 : STD_LOGIC_VECTOR(31 downto 0);
 signal p3 : STD_LOGIC_VECTOR(31 downto 0);
 
 --LINE
-signal line_p0 : STD_LOGIC_VECTOR(31 downto 0);
-signal line_p1 : STD_LOGIC_VECTOR(31 downto 0);
+signal line_p0 : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
+signal line_p1 : STD_LOGIC_VECTOR(31 downto 0) := (others => '0');
 signal line_enable : STD_LOGIC := '0';
 signal line_done : STD_LOGIC := '0';
 
@@ -72,7 +72,7 @@ port map (
     sync => dac_sync,
     reset => reset,
     done => line_done,
-	enable => line_enable,
+    enable => line_enable,
     clk => clk
 );
  
@@ -82,51 +82,58 @@ begin
 
     if(reset = '1') then
         state <= fetch;
-		next_addr <= (others => '0');
+        next_addr <= (others => '0');
     elsif rising_edge(clk) then
         case state is
             when fetch =>
                 primitive <= data;
 					 next_addr <= std_logic_vector(unsigned(next_addr) + 1);
 					 if enable = '1' then
-					     state <= decode;
+				 		  state <= decode;
 					 else
-					     state <= fetch;
-					 end if;				 
+						  state <= fetch;
+					 end if;
+
+                line_enable <= '0';					 
             when decode =>
                 p_type <= data(135 downto 128);
-					 p0 <= data(127 downto 96);
-					 p1 <= data(95 downto 64);
-					 p2 <= data(63 downto 32);
-					 p3 <= data(31 downto 0);
+					      line_enable <= '0';
 					 
-					 if unsigned(next_addr) > unsigned(primitive_count) then
-					     next_addr <= (others => '0');
-					 end if;
 					 
-					 if enable = '1' then
-					     state <= draw;
-					 else
-					     state <= fetch;
-					 end if;	
-			    when draw =>
-				    if p_type = "00000101" then --LINE
-					      line_p0 <= p0;
-							line_p1 <= p1;
-					      line_enable <= '1';
-							if line_enable = '1' and line_done = '1' then
-							    line_enable <= '0';
-							    state <= fetch;
-							else
-							    state <= draw;
-							end if;
---					 elsif p_type = "00000110" then --QUAD BEZ
-					 
---					 elsif p_type = "00000111" then --CUBE BEZ
-					 
-					 else
+                     p0 <= data(127 downto 96);
+                     p1 <= data(95 downto 64);
+                     p2 <= data(63 downto 32);
+                     p3 <= data(31 downto 0);
+                     
+                     if unsigned(next_addr) > unsigned(primitive_count) then
+                         next_addr <= (others => '0');
+                     end if;               
+                     if enable = '1' then
+                         state <= draw;
+                     else
+                         state <= fetch;
+                     end if;    
+                when draw =>
+                    if p_type = "00000101" then --LINE
+                          line_p0 <= p0;
+                          line_p1 <= p1;
+                          line_enable <= '1';
+                          state <= waiting;
+--                     elsif p_type = "00000110" then --QUAD BEZ
+                     
+--                     elsif p_type = "00000111" then --CUBE BEZ         
+                     else
                 -- PANIC
-					 end if;
+                     end if;
+					when waiting =>
+					    if p_type = "00000101" then --LINE
+						     if line_done = '1' then
+							      line_enable <= '0';
+							      state <= fetch;
+							  else
+									  state <= waiting;
+							  end if;
+						 end if;
         end case;    
     end if;
 end process;
