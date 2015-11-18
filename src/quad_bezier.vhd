@@ -50,52 +50,51 @@ begin
     );
     sync <= dac_sync;
 
-
-    process(clk, p0, p1, p2, reset)
-    begin
-        if(reset = '1') then
-            state <= waiting;
-        elsif rising_edge(clk) then
-            case state is
-                when finished =>
-                    done <= '1';
-                    state <= waiting;
-                when waiting =>
-                    done <= '0';
-                    bez_p0 <= p0;
-                    bez_p1 <= p1;
-                    bez_p2 <= p2;
-                    i <= (others => '0');
-                    if enable = '1' then
-                        state <= updating;
-                    else
-                        state <= waiting;
-                    end if;
-                when updating =>
-                    done <= '0';
-                    if dac_sync = '1' then
-                        i <= std_logic_vector(unsigned(i) + 64);			
-                        din <= temp_x(59 downto 44) & temp_y(59 downto 44);
-                    end if;
-                    t <= i & "00000";
-                    u <= std_logic_vector(1024 - unsigned(i)) & "00000";
-
-                    a <= std_logic_vector((unsigned(u) * unsigned(u)));
-                    b <= std_logic_vector(((unsigned(t) * unsigned(u)))) & "0";
-                    c <= std_logic_vector((unsigned(t) * unsigned(t)));
-
-                    temp_x <= std_logic_vector(((unsigned(a) * unsigned(bez_p0(31 downto 16))) + (unsigned(b) * unsigned(bez_p1(31 downto 16))) + (unsigned(c) * unsigned(bez_p2(31 downto 16)))));
-                    temp_y <= std_logic_vector(((unsigned(a) * unsigned(bez_p0(15 downto 0))) + (unsigned(b) * unsigned(bez_p1(15 downto 0))) + (unsigned(c) * unsigned(bez_p2(15 downto 0)))));
-
-
-                    if unsigned(i) >= 1025 then
-                        done <= '1';
-                        state <= finished;
-                    else
-                        state <= updating;
-                    end if;
-            end case;
-        end if;
-    end process;
+process(clk, p0, p1, p2, reset)
+begin
+	 if(reset = '1') then
+			state <= waiting;
+	  elsif rising_edge(clk) then
+			  case state is
+				  when finished =>
+						done <= '1';
+						state <= waiting;
+				  when waiting =>
+				      done <= '0';
+						bez_p0 <= p0;
+						bez_p1 <= p1;
+						bez_p2 <= p2;
+						i <= (others => '0');
+						if enable = '1' then
+							 state <= updating;
+						else
+							 state <= waiting;
+						end if;
+				  when updating =>
+				      done <= '0';
+						if dac_sync = '1' then
+							i <= std_logic_vector(unsigned(i) + 32);			
+							din <= temp_x(31 downto 16) & temp_y(43 downto 28);
+						else
+							t <= i & "00000";
+							u <= std_logic_vector(1024 - unsigned(i)) & "00000";
+							
+							a <= std_logic_vector((unsigned(u) * unsigned(u)) srl 15);
+							b <= std_logic_vector((unsigned(t) * unsigned(u)) srl 14);
+							c <= std_logic_vector((unsigned(t) * unsigned(t)) srl 15);
+							
+							temp_x <= std_logic_vector(((unsigned(a) * unsigned(bez_p0(31 downto 16))) + (unsigned(b) * unsigned(bez_p1(31 downto 16))) + (unsigned(c) * unsigned(bez_p2(31 downto 16)))));
+							temp_y <= std_logic_vector(((unsigned(a) * unsigned(bez_p0(15 downto 0))) + (unsigned(b) * unsigned(bez_p1(15 downto 0))) + (unsigned(c) * unsigned(bez_p2(15 downto 0)))));
+						end if;
+					
+						if unsigned(i) >= (1024 + 32) then
+							done <= '1';
+							state <= finished;
+						else
+							state <= updating;
+						end if;
+			  end case;
+	  end if;
+end process;
 end Behavioral;
 
