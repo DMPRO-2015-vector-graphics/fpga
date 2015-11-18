@@ -16,10 +16,8 @@ ARCHITECTURE behavior OF tb_ALU IS
     signal read_data_3 : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
     signal read_data_4 : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
     signal read_data_5 : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
-    signal instruction : instruction_t;
+    signal immediate : immediate_t;
     signal op : op_t;
-    signal alu_source_a : alu_source_t;
-    signal alu_source_b : alu_source_t;
 
 
     --Outputs
@@ -39,13 +37,11 @@ BEGIN
         read_data_3 => read_data_3,
         read_data_4 => read_data_4,
         read_data_5 => read_data_5,
-        instruction => instruction,
+        immediate => immediate,
         op => op,
         zero => zero,
         alu_result_out => alu_result_out,
-        prim_result => prim_result,
-        alu_source_a => alu_source_a,
-        alu_source_b => alu_source_b
+        prim_result => prim_result
     );
 
     -- Clock process definitions
@@ -65,23 +61,19 @@ BEGIN
 
         -- mov
         report "MOV";
-        instruction <= make_instruction(x"08201234");
+        immediate <= x"1234";
         op <= mov;
-        alu_source_a <= IMM;
-        alu_source_b <= REG1;
         wait for clk_period/2;
         assert alu_result_out = x"00001234";
-        assert prim_result = (others => '0');
         wait for clk_period/2;
-        instruction <= make_instruction(x"14011000");
-        read_data_2 <= x"00000000";
-        read_data_3 <= x"FFFFFFFF";
-        op <= line;
+        -- movu
+        report "MOVU";
+        immediate <= x"04D2";
+        read_data_1 <= x"0000FFFF";
+        op <= movu;
         wait for clk_period/2;
-        assert alu_result_out = (others => '0');
-        assert prim_result = x"0100000000FFFFFFFF0000000000000000";
+        assert alu_result_out = x"04D2FFFF";
         report "ALU test complete";
-
         wait;
     end process;
 END;

@@ -29,8 +29,8 @@ begin
             control_signals_out.pc_write <= false;
             reset_if <= '0';
             if state = S_OFFLINE then
-                state <= S_FETCH_1;
-            elsif state = S_FETCH_1 then
+                state <= S_FETCH;
+            elsif state = S_FETCH then
                 control_signals_out.pc_write <= true;
                 state <= S_EXECUTE;
             elsif state = S_EXECUTE then
@@ -38,18 +38,18 @@ begin
                     reset_if <= '1';
                     state <= S_STALL;
                 else
-                    state <= S_FETCH_1;
+                    state <= S_FETCH;
                 end if;
             else
                 reset_if <= '0';
-                state <= S_FETCH_1;
+                state <= S_FETCH;
             end if;
         end if;
     end process;
 
     update: process(state, opcode)
     begin
-        if state = S_FETCH_1 then
+        if state = S_FETCH then
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
             control_signals_out.mem_to_reg <= FROM_ALU;
@@ -57,8 +57,6 @@ begin
             control_signals_out.reg_dest <= REG1;
             control_signals_out.prim_mem_write <= false;
             control_signals_out.mem_write <= false;
-            control_signals_out.alu_source_a <= REG1;
-            control_signals_out.alu_source_b <= REG1;
             control_signals_out.branch <= false;
             control_signals_out.jump <= false;
         elsif state = S_EXECUTE then
@@ -72,8 +70,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when jmp =>
@@ -84,8 +80,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= true;
                 when add =>
@@ -96,8 +90,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG2;
-                    control_signals_out.alu_source_b <= REG3;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when mov =>
@@ -108,8 +100,26 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= IMM;
-                    control_signals_out.alu_source_b <= REG1;
+                    control_signals_out.branch <= false;
+                    control_signals_out.jump <= false;
+                when movu =>
+                    control_signals_out.reg_write <= true;
+                    control_signals_out.prim_reg_write <= false;
+                    control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
+                    control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
+                    control_signals_out.mem_write <= false;
+                    control_signals_out.branch <= false;
+                    control_signals_out.jump <= false;
+                when movl =>
+                    control_signals_out.reg_write <= true;
+                    control_signals_out.prim_reg_write <= false;
+                    control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
+                    control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= false;
+                    control_signals_out.mem_write <= false;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when lsl =>
@@ -120,8 +130,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG2;
-                    control_signals_out.alu_source_b <= IMM;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when line =>
@@ -132,8 +140,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when bezquad =>
@@ -144,8 +150,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when bezqube =>
@@ -156,8 +160,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when ldr =>
@@ -168,8 +170,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when str =>
@@ -180,8 +180,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= true;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when ldrp =>
@@ -192,8 +190,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when strp =>
@@ -204,8 +200,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= true;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when beq =>
@@ -216,8 +210,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG2;
                     control_signals_out.branch <= true;
                     control_signals_out.jump <= false;
                 when others =>
@@ -228,8 +220,6 @@ begin
                     control_signals_out.reg_dest <= REG1;
                     control_signals_out.prim_mem_write <= false;
                     control_signals_out.mem_write <= false;
-                    control_signals_out.alu_source_a <= REG1;
-                    control_signals_out.alu_source_b <= REG1;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
             end case;
@@ -243,8 +233,6 @@ begin
             control_signals_out.reg_dest <= REG1;
             control_signals_out.prim_mem_write <= false;
             control_signals_out.mem_write <= false;
-            control_signals_out.alu_source_a <= REG1;
-            control_signals_out.alu_source_b <= REG1;
             control_signals_out.branch <= false;
             control_signals_out.jump <= false;
         end if;

@@ -5,7 +5,7 @@ use ieee.std_logic_arith.conv_std_logic_vector;
 
 package Defs is
 
-    type state_t is (S_OFFLINE, S_FETCH_1, S_EXECUTE, S_STALL);
+    type state_t is (S_OFFLINE, S_FETCH, S_EXECUTE, S_STALL);
 
     subtype opcode_t is std_logic_vector(5 downto 0);
     subtype reg_t is std_logic_vector(4 downto 0);
@@ -25,7 +25,7 @@ package Defs is
         end record;
 
     type op_t is (
-        nop, jmp, mov, add, lsl, line, bezquad, bezqube, ldr, str, ldrp, strp, beq
+        nop, jmp, mov, movu, movl, add, lsl, line, bezquad, bezqube, ldr, str, ldrp, strp, beq
     );
 
     type alu_source_t is (REG1, REG2, REG3, REG4, REG5, IMM);
@@ -47,8 +47,6 @@ package Defs is
             reg_dest : reg_dest_t;
             prim_mem_write : mem_write_t;
             mem_write : mem_write_t;
-            alu_source_a : alu_source_t;
-            alu_source_b : alu_source_t;
             branch : branch_t;
             jump : jump_t;
             op : op_t;
@@ -112,6 +110,10 @@ begin
             return strp;
         when "001100" =>
             return beq;
+        when "001101" =>
+            return movu;
+        when "001110" =>
+            return movl;
         when others =>
             return nop;
     end case;

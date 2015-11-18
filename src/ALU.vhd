@@ -20,9 +20,7 @@ entity ALU is
         op : in op_t;
         zero : out std_logic;
         alu_result_out : out std_logic_vector(DATA_WIDTH-1 downto 0);
-        prim_result : out std_logic_vector(PRIM_WIDTH-1 downto 0);
-        alu_source_a : in alu_source_t;
-        alu_source_b : in alu_source_t
+        prim_result : out std_logic_vector(PRIM_WIDTH-1 downto 0)
     );
 end ALU;
 
@@ -31,10 +29,16 @@ architecture Behavioral of ALU is
     signal alu_result : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
 begin
 
-    alu_perform_op: process(op, read_data_1, read_data_2, read_data_3, read_data_4, read_data_5, immediate, alu_source_a, alu_source_b)
+    alu_perform_op: process(op, read_data_1, read_data_2, read_data_3, read_data_4, read_data_5, immediate)
     begin
         case op is
             when mov =>
+                alu_result <= std_logic_vector(resize(signed(immediate), 32));
+                prim_result <= (others => '0');
+            when movu =>
+                alu_result <= immediate & read_data_1(15 downto 0);
+                prim_result <= (others => '0');
+            when movl =>
                 alu_result <= read_data_1(31 downto 16) & immediate;
                 prim_result <= (others => '0');
             when add =>

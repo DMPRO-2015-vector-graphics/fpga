@@ -117,9 +117,7 @@ begin
         op => control_signals.op,
         Zero => Zero,
         alu_result_out => alu_result,
-        prim_result => prim_result,
-        alu_source_a => control_signals.alu_source_a,
-        alu_source_b => control_signals.alu_source_b
+        prim_result => prim_result
     );
 
     prim_reg: entity work.PrimReg
