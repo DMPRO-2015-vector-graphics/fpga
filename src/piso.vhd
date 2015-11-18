@@ -56,7 +56,7 @@ begin
                 y_out <= temp_y(n-1);
                 temp_x <= temp_x(n-2 downto 0) & '0';
                 temp_y <= temp_y(n-2 downto 0) & '0';
-                if (shift_counter >= n) then
+                if (shift_counter >= n) or enable = '0' then
                     state <= waiting;
                 else
                     state <= shifting;

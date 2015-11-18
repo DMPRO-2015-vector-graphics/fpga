@@ -24,8 +24,11 @@ entity dac_output is
 end dac_output;
 
 architecture Behavioral of dac_output is
-    type output_states is (fetch, decode, draw, waiting);
-
+    type output_states is (fetch, decode, draw);
+    
+	 signal piso_in : STD_LOGIC_VECTOR(31 downto 0);
+	 signal piso_enable : STD_LOGIC;
+	 signal sync : STD_LOGIC;
     signal state : output_states := fetch;
     signal primitive : STD_LOGIC_VECTOR(DATA_WIDTH-1 downto 0);
     signal next_addr : STD_LOGIC_VECTOR(ADDR_WIDTH-1 downto 0);
@@ -40,17 +43,16 @@ architecture Behavioral of dac_output is
     --LINE
     signal line_enable : STD_LOGIC := '0';
     signal line_done : STD_LOGIC := '0';
-    signal line_x : STD_LOGIC := '0';
-    signal line_y : STD_LOGIC := '0';
-    signal line_sync : STD_LOGIC := '0';
+    signal line_data : STD_LOGIC_VECTOR(31 downto 0);
 
     --BEZ QUAD
     signal quad_enable : STD_LOGIC := '0';
     signal quad_done : STD_LOGIC := '0';
-    signal quad_x : STD_LOGIC := '0';
-    signal quad_y : STD_LOGIC := '0';
-    signal quad_sync : STD_LOGIC := '0';
+    signal quad_data : STD_LOGIC_VECTOR(31 downto 0);
 begin
+
+    dac_sync <= sync;
+
     -- FORWARD CLK
     ODDR2_inst : ODDR2
     port map (
@@ -63,17 +65,27 @@ begin
         R => '0',    -- 1-bit reset input
         S => '0'     -- 1-bit set input
     );
+	 
+	 piso: entity work.piso 
+    port map(
+        clk => clk,
+        reset => reset,
+        enable => piso_enable,
+        parallel_in => piso_in,
+        x_out => dac0_data,
+        y_out => dac1_data,
+        sync => sync
+    );
 
     -- DRAW LINES
     dac_line: entity work.dac_line 
     port map (
         p0 => p0,
         p1 => p1,
-        x => line_x,
-        y => line_y,
-        sync => line_sync,
+		  dout => line_data,
         reset => reset,
         done => line_done,
+		  sync => sync,
         enable => line_enable,
         clk => clk
     );
@@ -83,13 +95,12 @@ begin
     port map(
         clk => clk,
         enable => quad_enable,
+		  dout => quad_data,
         p0 => p0,
         p1 => p1,
         p2 => p2,
         reset => reset,
-        x => quad_x,
-        y => quad_y,
-        sync => quad_sync,
+		  sync => sync,
         done => quad_done
     );
 
@@ -100,6 +111,9 @@ begin
         if(reset = '1') then
             state <= fetch;
             next_addr <= (others => '0');
+				piso_enable <= '0';
+				line_enable <= '0';
+				quad_enable <= '0';
         elsif rising_edge(clk) then
             case state is
                 when fetch =>
@@ -110,75 +124,66 @@ begin
                     else
                         state <= fetch;
                     end if;
-
-                    line_enable <= '0';					 
-                when decode =>
-                    p_type <= data(135 downto 128);
+						  
+                    quad_enable <= '0';
                     line_enable <= '0';
-                    quad_enable <= '1';							
+						  piso_enable <= '0';
+                    piso_in <= (others => '0');						  
+                when decode =>
+                    p_type <= data(135 downto 128);							
                     p0 <= data(127 downto 96);
                     p1 <= data(95 downto 64);
                     p2 <= data(63 downto 32);
                     p3 <= data(31 downto 0);
 
-                    if unsigned(next_addr) > unsigned(primitive_count) then
+                    piso_in <= (others => '0');
+						  line_enable <= '0';
+                    quad_enable <= '0';
+						  piso_enable <= '0';
+						  if unsigned(next_addr) > unsigned(primitive_count) then
                         next_addr <= (others => '0');
                     end if;               
-                    if enable = '1' then
+                    
+						  if enable = '1' then
                         state <= draw;
                     else
                         state <= fetch;
                     end if;    
                 when draw =>
+					     piso_enable <= '1';
                     if p_type = "00000000" then
                         line_enable <= '0';
                         quad_enable <= '0';
                         state <= fetch;
+								piso_in <= (others => '0');
                     elsif p_type = "00000001" then --LINE
-                        dac0_data <= line_x;
-                        dac1_data <= line_y;
-                        dac_sync <= line_sync;
+                        piso_in <= line_data;
                         line_enable <= '1';
                         quad_enable <= '0';
-                        state <= waiting;
+								if line_done = '1' then
+                            line_enable <= '0';
+									 piso_enable <= '0';
+                            state <= fetch;
+                        else
+                            state <= draw;
+                        end if;
                     elsif p_type = "00000010" then --QUAD BEZ
-                        dac0_data <= quad_x;
-                        dac1_data <= quad_y;
-                        dac_sync <= quad_sync;
+                        piso_in <= quad_data;
                         line_enable <= '0';
                         quad_enable <= '1';
-                        state <= waiting;
+								if quad_done = '1' then
+                            quad_enable <= '0';
+									 piso_enable <= '0';
+                            state <= fetch;
+                        else
+                            state <= draw;
+                        end if;
                     --                    elsif p_type = "00000111" then --CUBE BEZ         
                     else
                         line_enable <= '0';
                         quad_enable <= '0';
+								piso_in <= (others => '0');
                         state <= fetch;
-                    end if;
-                when waiting =>
-                    if p_type = "00000001" then --LINE
-                        dac0_data <= line_x;
-                        dac1_data <= line_y;
-                        dac_sync <= line_sync;
-                        line_enable <= '1';
-                        quad_enable <= '0';
-                        if line_done = '1' then
-                            line_enable <= '0';
-                            state <= fetch;
-                        else
-                            state <= waiting;
-                        end if;
-                    elsif p_type = "00000010" then --QUAD BEZ
-                        dac0_data <= quad_x;
-                        dac1_data <= quad_y;
-                        dac_sync <= quad_sync;
-                        line_enable <= '0';
-                        quad_enable <= '1';
-                        if line_done = '1' then
-                            quad_enable <= '0';
-                            state <= fetch;
-                        else
-                            state <= waiting;
-                        end if;
                     end if;
             end case;    
         end if;
