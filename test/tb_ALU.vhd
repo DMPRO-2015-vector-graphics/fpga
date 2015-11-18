@@ -65,6 +65,7 @@ BEGIN
         op <= mov;
         wait for clk_period/2;
         assert alu_result_out = x"00001234";
+        assert prim_result = x"0000000000000000000000000000000000";
         wait for clk_period/2;
         -- movu
         report "MOVU";
@@ -73,6 +74,7 @@ BEGIN
         op <= movu;
         wait for clk_period/2;
         assert alu_result_out = x"04D2FFFF";
+        assert prim_result = x"0000000000000000000000000000000000";
         report "ALU test complete";
         wait;
     end process;

@@ -65,7 +65,8 @@ begin
     )
     port map(
         clk => clk,
-        reset => reset_if or reset,
+        reset => reset,
+        reset_if => reset_if,
         address => imem_address,
         instruction => imem_data_in,
         sram_addr => sram_addr,
@@ -92,33 +93,25 @@ begin
                 when 2 =>
                     return x"0000";
                 when 4 =>
-                    return x"1021";
+                    return x"345F";
                 when 6 =>
-                    return x"0010";
+                    return x"FFFF";
                 when 8 =>
-                    return x"0820";
+                    return x"385F";
                 when 10 =>
-                    return x"0000";
+                    return x"FFFF";
                 when 12 =>
-                    return x"0840";
-                when 14 =>
-                    return x"7fff";
-                when 16 =>
-                    return x"1042";
-                when 18 =>
-                    return x"0010";
-                when 20 =>
-                    return x"0840";
-                when 22 =>
-                    return x"7fff";
-                when 24 =>
                     return x"1401";
-                when 26 =>
+                when 14 =>
                     return x"1000";
-                when 28 =>
-                    return x"2c00";
-                when 30 =>
-                    return x"0001";
+                when 16 =>
+                    return x"2C00";
+                when 18 =>
+                    return x"0000";
+                when 20 =>
+                    return x"0400";
+                when 22 =>
+                    return x"0014";
                 when others =>
                     return x"0000";
             end case;

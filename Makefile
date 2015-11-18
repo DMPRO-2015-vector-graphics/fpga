@@ -142,7 +142,8 @@ ${TOP_NAME}.prj: $(patsubst %.xco,%.vhd,${SUPPORT_SRC} ${STUDENT_SRC})
 	cp -v src/coregen.cgp work/coregen.cgp && \
 	cd ${WORK_DIR} && \
 	${COREGEN} -p ./coregen.cgp -r -b $< && \
-	cp -v $$(basename $*).vhd $$(basename $*).ngc $(dir $@)
+	cp -v $$(basename $*).vhd $(dir $@) && \
+	(cp -v $$(basename $*).ngc $(dir $@) || :)
 
 .PHONY: clean
 clean:

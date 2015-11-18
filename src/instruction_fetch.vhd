@@ -11,6 +11,7 @@ entity instruction_fetch is
     );
     Port ( clk : in STD_LOGIC;
            reset : in STD_LOGIC;
+           reset_if : in std_logic;
            address : in  STD_LOGIC_VECTOR (SRAM_ADDR_WIDTH-1 downto 0);
            instruction : out  STD_LOGIC_VECTOR (INSTR_WIDTH-1 downto 0);
            valid : out STD_LOGIC;
@@ -25,7 +26,7 @@ architecture Behavioral of instruction_fetch is
     type fetch_states is (low, high);
     signal state : fetch_states := high;
     signal temp : STD_LOGIC_VECTOR(SRAM_DATA_WIDTH-1 downto 0) := (others => '0');
-    signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0) := (others => '0');
+    signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0);
     signal instr : STD_LOGIC_VECTOR(INSTR_WIDTH-1 downto 0) := (others => '0');
     signal low_valid : STD_LOGIC := '0';
     signal high_valid : STD_LOGIC := '0';
@@ -50,22 +51,30 @@ begin
         if(reset = '1') then
             instruction <= (others => '0');
             state <= high;
-            addr <= address;
+            addr <= (others => '0');
             high_valid <= '0';
             low_valid <= '0';
         elsif(rising_edge(clk)) then
             case state is
                 when low =>
-                    instr(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 2);
+                    instruction(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
+                    if reset_if = '1' then
+                        addr <= address;
+                    else
+                        addr <= std_logic_vector(unsigned(addr) + 2);
+                    end if;
                     state <= high;
                     low_valid <= '1';
                 when high =>
-                    instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    addr <= std_logic_vector(unsigned(addr) +2);
-                    state <= low;
+                    instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
+                    if reset_if = '1' then
+                        state <= high;
+                        addr <= address;
+                    else
+                        addr <= std_logic_vector(unsigned(addr) +2);
+                        state <= low;
+                    end if;
                     high_valid <= '1';
-                    instruction <= instr;
             end case;
         end if;	  
         valid <= low_valid and high_valid;

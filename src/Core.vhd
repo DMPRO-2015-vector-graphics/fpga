@@ -22,7 +22,8 @@ entity Core is
         scene_mem_we                    : out std_logic;
         scene_mem_data_out              : out std_logic_vector(PRIM_WIDTH-1 downto 0);
         scene_mem_data_in               : in std_logic_vector(PRIM_WIDTH-1 downto 0);
-        scene_mem_addr                  : out std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0)
+        scene_mem_addr                  : out std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0);
+        primitive_counter_out           : out std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0)
     );
 end Core;
 
@@ -50,7 +51,8 @@ begin
     control: entity work.Control
     generic map(
         INSTR_WIDTH => INSTR_WIDTH,
-        DATA_WIDTH => DATA_WIDTH
+        DATA_WIDTH => DATA_WIDTH,
+        SCENE_MEM_ADDR_WIDTH => SCENE_MEM_ADDR_WIDTH
     )
     port map(
         clk => clk,
@@ -58,6 +60,7 @@ begin
         processor_enable => processor_enable,
         opcode => instruction.opcode,
         control_signals_out => control_signals,
+        primitive_counter_out => primitive_counter_out,
         reset_if => reset_if
     );
 
