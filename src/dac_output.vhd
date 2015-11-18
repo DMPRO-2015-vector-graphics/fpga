@@ -49,6 +49,11 @@ architecture Behavioral of dac_output is
     signal quad_enable : STD_LOGIC := '0';
     signal quad_done : STD_LOGIC := '0';
     signal quad_data : STD_LOGIC_VECTOR(31 downto 0);
+    
+    --BEZ CUBE
+    signal cube_enable : STD_LOGIC := '0';
+    signal cube_done : STD_LOGIC := '0';
+    signal cube_data : STD_LOGIC_VECTOR(31 downto 0);
 begin
 
     dac_sync <= sync;
@@ -66,7 +71,7 @@ begin
         S => '0'     -- 1-bit set input
     );
 	 
-	 piso: entity work.piso 
+	piso: entity work.piso 
     port map(
         clk => clk,
         reset => reset,
@@ -82,10 +87,10 @@ begin
     port map (
         p0 => p0,
         p1 => p1,
-		  dout => line_data,
+		dout => line_data,
         reset => reset,
         done => line_done,
-		  sync => sync,
+		sync => sync,
         enable => line_enable,
         clk => clk
     );
@@ -95,16 +100,31 @@ begin
     port map(
         clk => clk,
         enable => quad_enable,
-		  dout => quad_data,
+		dout => quad_data,
         p0 => p0,
         p1 => p1,
         p2 => p2,
         reset => reset,
-		  sync => sync,
+		sync => sync,
         done => quad_done
     );
+    
+    -- DRAW CUBIC BEZIER
+    dac_cube_bez: entity work.cube_bezier 
+    port map(
+        clk => clk,
+        enable => cube_enable,
+		dout => cube_data,
+        p0 => p0,
+        p1 => p1,
+        p2 => p2,
+        p3 => p3,
+        reset => reset,
+		sync => sync,
+        done => cube_done
+    );
 
-    process(clk, reset)
+    process(clk, reset, next_addr)
     begin
         address <= next_addr;
 
@@ -114,6 +134,7 @@ begin
 				piso_enable <= '0';
 				line_enable <= '0';
 				quad_enable <= '0';
+                cube_enable <= '0';
         elsif rising_edge(clk) then
             case state is
                 when fetch =>
@@ -127,42 +148,46 @@ begin
 						  
                     quad_enable <= '0';
                     line_enable <= '0';
-						  piso_enable <= '0';
+				    piso_enable <= '0';
+                    cube_enable <= '0';
                     piso_in <= (others => '0');						  
                 when decode =>
-                    p_type <= data(135 downto 128);							
-                    p0 <= data(127 downto 96);
-                    p1 <= data(95 downto 64);
-                    p2 <= data(63 downto 32);
-                    p3 <= data(31 downto 0);
+                    p_type <= primitive(135 downto 128);							
+                    p0 <= primitive(127 downto 96);
+                    p1 <= primitive(95 downto 64);
+                    p2 <= primitive(63 downto 32);
+                    p3 <= primitive(31 downto 0);
 
                     piso_in <= (others => '0');
-						  line_enable <= '0';
+					line_enable <= '0';
                     quad_enable <= '0';
-						  piso_enable <= '0';
-						  if unsigned(next_addr) > unsigned(primitive_count) then
+                    cube_enable <= '0';
+					piso_enable <= '0';
+					if unsigned(next_addr) > unsigned(primitive_count) then
                         next_addr <= (others => '0');
                     end if;               
                     
-						  if enable = '1' then
+					if enable = '1' then
                         state <= draw;
                     else
                         state <= fetch;
                     end if;    
                 when draw =>
-					     piso_enable <= '1';
+					piso_enable <= '1';
                     if p_type = "00000000" then
                         line_enable <= '0';
                         quad_enable <= '0';
+                        cube_enable <= '0';
                         state <= fetch;
-								piso_in <= (others => '0');
+                        piso_in <= (others => '0');
                     elsif p_type = "00000001" then --LINE
                         piso_in <= line_data;
                         line_enable <= '1';
                         quad_enable <= '0';
-								if line_done = '1' then
+                        cube_enable <= '0';
+                        if line_done = '1' then
                             line_enable <= '0';
-									 piso_enable <= '0';
+                            piso_enable <= '0';
                             state <= fetch;
                         else
                             state <= draw;
@@ -170,19 +195,32 @@ begin
                     elsif p_type = "00000010" then --QUAD BEZ
                         piso_in <= quad_data;
                         line_enable <= '0';
+                        cube_enable <= '0';
                         quad_enable <= '1';
-								if quad_done = '1' then
+                        if quad_done = '1' then
                             quad_enable <= '0';
-									 piso_enable <= '0';
+                            piso_enable <= '0';
                             state <= fetch;
                         else
                             state <= draw;
                         end if;
-                    --                    elsif p_type = "00000111" then --CUBE BEZ         
+                    elsif p_type = "00000011" then --CUBE BEZ
+                        piso_in <= cube_data;
+                        line_enable <= '0';
+                        cube_enable <= '1';
+                        quad_enable <= '0';
+                        if cube_done = '1' then
+                            cube_enable <= '0';
+                            piso_enable <= '0';
+                            state <= fetch;
+                        else
+                            state <= draw;
+                        end if;
                     else
                         line_enable <= '0';
+                        cube_enable <= '0';
                         quad_enable <= '0';
-								piso_in <= (others => '0');
+                        piso_in <= (others => '0');
                         state <= fetch;
                     end if;
             end case;    
