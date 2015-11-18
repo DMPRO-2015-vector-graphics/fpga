@@ -9,3 +9,6 @@
 # Directories
 work/
 products/
+src/pll.vhd
+src/SceneMem.vhd
+src/SceneMem.ngc

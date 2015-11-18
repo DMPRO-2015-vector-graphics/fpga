@@ -1,6 +1,7 @@
 VARS_OLD := $(.VARIABLES)
 
-XILINX_BINDIR = /opt/Xilinx/12.4/ISE_DS/ISE/bin/lin
+XILINX_BINDIR = /opt/Xilinx/14.5/ISE_DS/ISE/bin/lin/
+XILINX_SETTINGS_FILE = /opt/Xilinx/14.5/ISE_DS/settings32.sh
 COREGEN = ${XILINX_BINDIR}/coregen
 XST = ${XILINX_BINDIR}/xst
 NGDBUILD = ${XILINX_BINDIR}/ngdbuild
@@ -43,7 +44,7 @@ ${BITGEN_OUT}: ${PAR_OUT}
 	@echo -e "\n\n\n"
 	@echo "Generating bitfile \"$@\""
 	@echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	cp $^ . && \
 	${BITGEN} -intstyle ise -f ${CURDIR}/${TOP_NAME}.ut $< ${TOP_NAME}.bit && \
@@ -55,7 +56,7 @@ timing_report: ${TIMING_REPORT}
 ${TIMING_REPORT}: ${PAR_OUT} ${PROD_DIR}/${TOP_NAME}.pcf
 	@echo "Producing post-PaR timing report"
 	@echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	cp $^ . && \
 	${TRCE} -intstyle xflow -v 3 -l 3 $(notdir ${PAR_OUT}) -o $@ ${TOP_NAME}.pcf
@@ -69,7 +70,7 @@ ${PAR_OUT}: ${MAP_OUT} ${PROD_DIR}/${TOP_NAME}.pcf
 	@echo -e "\n\n\n"
 	@echo "Running place and route"
 	@echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	cp $^ . && \
 	${PAR} -w -intstyle ise -ol high -mt off ${TOP_NAME}_map.ncd ${TOP_NAME}.ncd ${TOP_NAME}.pcf && \
@@ -82,7 +83,7 @@ ${MAP_OUT}: ${TRANSLATE_OUT}
 	@echo -e "\n\n\n"
 	@echo "Running map"
 	@echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	cp $^ . && \
 	${MAP} -intstyle ise -p xc6slx45-csg324-2 -w -logic_opt off -ol high -t 1 -xt 0 -register_duplication off -r 4 -global_opt off -mt off -ir off -pr off -lc off -power off -o ${TOP_NAME}_map.ncd ${TOP_NAME}.ngd ${TOP_NAME}.pcf  && \
@@ -96,7 +97,7 @@ ${TRANSLATE_OUT}: ${SYNTH_OUT} ${CONSTRAINT_FILES} ${IP_NETLISTS}
 	@echo -e "\n\n\n"
 	@echo "Running translate"
 	@echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	cp ${SYNTH_OUT} ${IP_NETLISTS} . && \
 	${NGDBUILD} -intstyle ise -dd _ngo -sd src/framework -nt timestamp $(addprefix -uc ,${CONSTRAINT_FILES})  -p xc6slx45-csg324-2 ${TOP_NAME}.ngc ${TOP_NAME}.ngd && \
@@ -111,7 +112,7 @@ ${SYNTH_OUT}: ${PROJECT_FILES}
 	@echo -e "\n\n\n"
 	@echo "Running synthesize"
 	@echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
 	${XST} -intstyle ise -ifn "${CURDIR}/${TOP_NAME}.xst" -ofn "${TOP_NAME}.syr" && \
 	cp -v $(notdir $@) ${TOP_NAME}.syr ${TOP_NAME}.ngr $(dir $@) 
@@ -138,7 +139,7 @@ ${TOP_NAME}.prj: $(patsubst %.xco,%.vhd,${SUPPORT_SRC} ${STUDENT_SRC})
 # May need work
 %.vhd %.ngc: %.xco
 	@echo "Generating IP core from description file \"$*\""
-	@. /opt/Xilinx/12.4/ISE_DS/ISE/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/ISE/settings32.sh && \
 	cp -v src/coregen.cgp work/coregen.cgp && \
 	cd ${WORK_DIR} && \
 	${COREGEN} -p ./coregen.cgp -r -b $< && \
@@ -174,16 +175,16 @@ ${PROD_DIR}/%.vcd: ${WORK_DIR}/%.vcd
 	@cp -v $< $@
 
 ${WORK_DIR}/%.vcd: ${WORK_DIR}/%_driver ${WORK_DIR}/sim_commands_%.tcl
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd $(dir $<) && \
 	echo "Running $< -tclbatch ${WORK_DIR}/sim_commands_$*.tcl" && \
 	$< -vcdfile $@ -tclbatch ${WORK_DIR}/sim_commands_$*.tcl
 
 ${WORK_DIR}/%_driver: ${TEST_DIR}/%.vhd ${WORK_DIR}/%.prj
 	@echo "Creating test driver from $^"
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd ${WORK_DIR} && \
-	${FUSE} work.$* -prj ${WORK_DIR}/$*.prj -o $@
+	${FUSE} -mt off work.$* -prj ${WORK_DIR}/$*.prj -o $@
 
 ${WORK_DIR}/%.prj: ${CURDIR}/${TOP_NAME}.prj
 	@cp $< $@
@@ -204,7 +205,7 @@ ${WORK_DIR}/sim_commands_%.tcl: generic_sim_commands.tcl ${TEST_DIR}/default.con
 	echo "OK" || echo "SUCCESS"
 
 sim_%: ${WORK_DIR}/%_driver
-	@. /opt/Xilinx/12.4/ISE_DS/settings32.sh && \
+	@. /opt/Xilinx/14.5/ISE_DS/settings32.sh && \
 	cd $(dir $<) && \
 	tcl_arg=""; \
         waveform_arg=""; \
