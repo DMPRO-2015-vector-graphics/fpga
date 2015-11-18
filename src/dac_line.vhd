@@ -7,18 +7,15 @@ entity dac_line is
         p0 : in  STD_LOGIC_VECTOR (31 downto 0);
         p1 : in  STD_LOGIC_VECTOR (31 downto 0);
         reset : in STD_LOGIC;
-        x : out  STD_LOGIC;
-        y : out  STD_LOGIC;
-        sync : out  STD_LOGIC;
+		  dout : out STD_LOGIC_VECTOR(31 downto 0);
         done : out STD_LOGIC;
+		  sync : in STD_LOGIC;
         clk : in  STD_LOGIC;
         enable : in STD_LOGIC
     );
 end dac_line;
 
 architecture Behavioral of dac_line is
-    signal din : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
-    signal dac_sync : STD_LOGIC;
     signal x0 : STD_LOGIC_VECTOR (16 downto 0) := (others => '0');
     signal y0 : STD_LOGIC_VECTOR (16 downto 0) := (others => '0');
     signal x1 : STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
@@ -35,18 +32,7 @@ architecture Behavioral of dac_line is
     signal step_y : STD_LOGIC_VECTOR(15 downto 0) := (others => '0');
 
 begin
-    piso: entity work.piso 
-    PORT MAP(
-        clk => clk,
-        reset => reset,
-        enable => enable,
-        parallel_in => din,
-        x_out => x,
-        y_out => y,
-        sync => dac_sync
-    );
-    sync <= dac_sync;
-    process(clk, p0, p1, reset)
+    process(clk, p0, p1, reset, sync)
     begin
         if(reset = '1') then
             state <= waiting;
@@ -77,8 +63,8 @@ begin
                     end if;                      
                 when updating =>
                     done <= '0';
-                    if(dac_sync = '1') then
-                        din <= x0(15 downto 0) & y0(15 downto 0 );               
+                    if(sync = '1') then
+                        dout <= x0(15 downto 0) & y0(15 downto 0 );               
                         x0 <= std_logic_vector(unsigned(x0) + unsigned(step_x));
                         if signed(err) > 0 then
                             y0 <= std_logic_vector(unsigned(y0) + unsigned(step_y));
@@ -89,6 +75,8 @@ begin
                     if(unsigned(x0) >= unsigned(x1)) then
                         done <= '1';
                         state <= finished;
+						  elsif enable = '0' then
+							state <= waiting;
                     else
                         state <= updating;
                     end if;
