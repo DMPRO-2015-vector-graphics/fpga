@@ -67,7 +67,7 @@ architecture Behavior of VECTOR3K is
 begin
     if_inst: entity work.instruction_fetch
         generic map (
-            SRAM_ADDR_WIDTH => SRAM_ADDR_WIDTH,
+            SRAM_ADDR_WIDTH => INSTR_MEM_ADDR_WIDTH,
             SRAM_DATA_WIDTH => SRAM_DATA_WIDTH,
             INSTR_WIDTH => INSTR_WIDTH
         )
@@ -76,7 +76,7 @@ begin
             reset_if => reset_if,
             reset => reset,
             processor_enable => fpga_cs,
-            address => proc_imem_address,
+            address => proc_imem_address(9 downto 0),
             instruction => instruction,
             valid => instr_valid,
             sram_wen => sram_wen,
@@ -86,11 +86,11 @@ begin
         );
 
 
-   instr_mem_inst: instr_mem
+   instr_mem_inst: entity work.instr_mem
    port map (
                 clka => core_clk,
-                wea => '0',
-                addra => instr_mem_addr,
+                wea(0) => '0',
+                addra => instr_mem_addr(9 downto 0),
                 dina => (others => '0'),
                 douta => instr_mem_data
     );
