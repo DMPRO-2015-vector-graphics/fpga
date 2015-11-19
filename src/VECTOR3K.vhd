@@ -8,6 +8,7 @@ entity VECTOR3K is
         INSTR_WIDTH : integer := 32;
         DATA_WIDTH : integer := 32;
         SRAM_ADDR_WIDTH : integer := 19;
+        INSTR_MEM_ADDR_WIDTH : integer := 10;
         SRAM_DATA_WIDTH : integer := 16;
         PRIM_WIDTH : integer := 136;
         SCENE_MEM_ADDR_WIDTH : integer := 10
@@ -56,6 +57,10 @@ architecture Behavior of VECTOR3K is
     signal do_data_in : std_logic_vector(PRIM_WIDTH-1 downto 0);
     signal primitive_count : std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0);
 
+    -- instr mem signals
+    signal instr_mem_addr : std_logic_vector(INSTR_MEM_ADDR_WIDTH-1 downto 0);
+    signal instr_mem_data : std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
+
     -- Clock out signals
     signal clk_20 : std_logic;
     signal core_clk : std_logic;
@@ -76,13 +81,21 @@ begin
             valid => instr_valid,
             sram_wen => sram_wen,
             sram_ren => sram_ren,
-            sram_addr => sram_addr,
-            sram_data => sram_data
+            sram_addr => instr_mem_addr,
+            sram_data => instr_mem_data
         );
 
 
-    fb_data(15 downto 10) <= instruction(31 downto 26);
-    fb_data(9 downto 0) <= "1010101010";
+   instr_mem_inst: instr_mem
+   port map (
+                clka => core_clk,
+                wea => '0',
+                addra => instr_mem_addr,
+                dina => (others => '0'),
+                douta => instr_mem_data
+    );
+
+    fb_data <= instruction(15 downto 0);
 
     scene_mem: entity work.SceneMem
     port map (
@@ -152,5 +165,7 @@ begin
             primitive_counter_out   => primitive_count
         );
     
+
+    sram_addr <= (others => 'Z');
     vref_sleep <= '1';
 end Behavior;

@@ -83,7 +83,6 @@ begin
         valid <= low_valid and high_valid;
     end process;
 
-    sram_addr <= addr when processor_enable = '1' else (others => 'Z');
     sram_ren <= '0' when processor_enable = '1' else 'Z';
     sram_wen <= '1' when processor_enable = '1' else 'Z';
 
