@@ -67,6 +67,7 @@ begin
         clk => clk,
         reset => reset,
         reset_if => reset_if,
+        processor_enable => processor_enable,
         address => imem_address,
         instruction => imem_data_in,
         sram_addr => sram_addr,
@@ -122,7 +123,9 @@ begin
         wait for clk_period;
         wait for clk_period/2;
         reset <= '0';
+        wait for clk_period*4;
         processor_enable <= '1';
+        wait for clk_period;
         
         for I in 0 to 200 loop
             sram_data <= memory(sram_addr);

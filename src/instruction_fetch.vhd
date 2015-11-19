@@ -24,7 +24,7 @@ entity instruction_fetch is
 end instruction_fetch;
 
 architecture Behavioral of instruction_fetch is
-    type fetch_states is (low, high);
+    type fetch_states is (offline, init, low, high);
     signal state : fetch_states := high;
     signal temp : STD_LOGIC_VECTOR(SRAM_DATA_WIDTH-1 downto 0) := (others => '0');
     signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0);
@@ -49,33 +49,35 @@ begin
 
     process(clk, address, reset)
     begin
-        if(reset = '1') then
+        if reset = '1' or processor_enable = '0' then
             instruction <= (others => '0');
-            state <= high;
+            state <= offline;
             addr <= (others => '0');
             high_valid <= '0';
             low_valid <= '0';
         elsif(rising_edge(clk)) then
             case state is
                 when low =>
-                    instruction(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
-                    if reset_if = '1' then
-                        addr <= address;
-                    else
-                        addr <= std_logic_vector(unsigned(addr) + 2);
-                    end if;
-                    state <= high;
-                    low_valid <= '1';
-                when high =>
                     instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
                     if reset_if = '1' then
-                        state <= high;
+                        state <= low;
                         addr <= address;
                     else
-                        addr <= std_logic_vector(unsigned(addr) +2);
-                        state <= low;
+                        state <= high;
+                        addr <= std_logic_vector(unsigned(addr) + 2);
                     end if;
+                    low_valid <= '1';
+                when high =>
+                    instruction(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
+                    addr <= std_logic_vector(unsigned(addr) + 2);
                     high_valid <= '1';
+                    state <= low;
+                when offline =>
+                    state <= init;
+                when init =>
+                    instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
+                    addr <= std_logic_vector(unsigned(addr) + 2);
+                    state <= high;
             end case;
         end if;	  
         valid <= low_valid and high_valid;

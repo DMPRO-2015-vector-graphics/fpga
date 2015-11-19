@@ -32,6 +32,8 @@ begin
         elsif rising_edge(clk) then
             control_signals_out.pc_write <= false;
             if state = S_OFFLINE then
+                state <= S_INIT;
+            elsif state = S_INIT then
                 state <= S_FETCH;
             elsif state = S_FETCH then
                 control_signals_out.pc_write <= true;
