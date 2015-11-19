@@ -248,5 +248,7 @@ begin
             control_signals_out.jump <= false;
         end if;
     end process;
+
+    primitive_counter_out <= primitive_counter;
 end Behavioral;
 
