@@ -192,7 +192,7 @@ CSET pll_compensation=SYSTEM_SYNCHRONOUS
 CSET pll_divclk_divide=2
 CSET pll_notes=None
 CSET pll_ref_jitter=0.010
-CSET prim_in_freq=48.000
+CSET prim_in_freq=100.000
 CSET prim_in_jitter=0.010
 CSET prim_source=Single_ended_clock_capable_pin
 CSET primtype_sel=PLL_BASE
@@ -218,5 +218,4 @@ CSET use_reset=true
 CSET use_spread_spectrum=false
 CSET use_status=false
 # END Parameters
-GENERATE
 # CRC: 2c4f3ac5
