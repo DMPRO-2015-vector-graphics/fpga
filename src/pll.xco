@@ -32,7 +32,7 @@ SET verilogsim = true
 SET vhdlsim = true
 # END Project Options
 # BEGIN Select
-SELECT Clocking_Wizard family Xilinx,_Inc. 1.8
+SELECT Clocking_Wizard family Xilinx,_Inc. 3.6
 # END Select
 # BEGIN Parameters
 CSET calc_done=DONE
@@ -218,5 +218,4 @@ CSET use_reset=true
 CSET use_spread_spectrum=false
 CSET use_status=false
 # END Parameters
-GENERATE
 # CRC: 75cebfb5

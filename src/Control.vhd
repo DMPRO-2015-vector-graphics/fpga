@@ -235,6 +235,15 @@ begin
             end case;
         elsif state = S_STALL then
             reset_if <= '0';
+	    control_signals_out.reg_write <= false;
+            control_signals_out.prim_reg_write <= false;
+            control_signals_out.mem_to_reg <= FROM_ALU;
+            control_signals_out.prim_mem_to_reg <= FROM_ALU;
+            control_signals_out.reg_dest <= REG1;
+            control_signals_out.prim_mem_write <= false;
+            control_signals_out.mem_write <= false;
+            control_signals_out.branch <= false;
+            control_signals_out.jump <= false;
         else
             reset_if <= '0';
             control_signals_out.reg_write <= false;

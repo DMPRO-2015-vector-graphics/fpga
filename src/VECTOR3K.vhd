@@ -81,7 +81,8 @@ begin
         );
 
 
-    fb_data <= instruction(15 downto 0);
+    fb_data(15 downto 10) <= instruction(31 downto 26);
+    fb_data(9 downto 0) <= "1010101010";
 
     scene_mem: entity work.SceneMem
     port map (
