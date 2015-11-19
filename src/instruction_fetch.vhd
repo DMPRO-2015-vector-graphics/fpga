@@ -59,30 +59,32 @@ begin
             case state is
                 when low =>
                     instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    if reset_if = '1' then
-                        state <= low;
-                        addr <= address;
-                    else
-                        state <= high;
-                        addr <= std_logic_vector(unsigned(addr) + 2);
-                    end if;
+                    addr <= std_logic_vector(unsigned(addr) + 1);
+                    state <= high;
                     low_valid <= '1';
                 when high =>
                     instruction(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 2);
+                    if reset_if = '1' then
+                        state <= high;
+                        addr <= address;
+                    else
+                        state <= low;
+                        addr <= std_logic_vector(unsigned(addr) + 1);
+                    end if;
                     high_valid <= '1';
-                    state <= low;
                 when offline =>
                     state <= init;
+                    addr <= std_logic_vector(unsigned(addr) + 1);
                 when init =>
                     instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 2);
+                    addr <= std_logic_vector(unsigned(addr) + 1);
                     state <= high;
             end case;
         end if;	  
         valid <= low_valid and high_valid;
     end process;
 
+    sram_addr <= addr;
     sram_ren <= '0' when processor_enable = '1' else 'Z';
     sram_wen <= '1' when processor_enable = '1' else 'Z';
 

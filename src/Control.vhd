@@ -30,6 +30,7 @@ begin
         if reset = '1' or processor_enable = '0' then
             state <= S_OFFLINE;
         elsif rising_edge(clk) then
+            reset_if <= '0';
             control_signals_out.pc_write <= false;
             if state = S_OFFLINE then
                 state <= S_INIT;
@@ -40,6 +41,7 @@ begin
                 state <= S_EXECUTE;
             elsif state = S_EXECUTE then
                 if get_op(opcode) = ldr or get_op(opcode) = ldrp or get_op(opcode) = beq or get_op(opcode) = jmp then
+                    reset_if <= '1';
                     state <= S_STALL;
                 else
                     if get_op(opcode) = line or get_op(opcode) = bezqube or get_op(opcode) = bezquad then
@@ -56,7 +58,6 @@ begin
     update: process(state, opcode)
     begin
         if state = S_FETCH then
-            reset_if <= '0';
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
             control_signals_out.mem_to_reg <= FROM_ALU;
@@ -68,7 +69,6 @@ begin
             control_signals_out.jump <= false;
         elsif state = S_EXECUTE then
             control_signals_out.op <= get_op(opcode);
-            reset_if <= '0';
             case get_op(opcode) is
                 when nop => 
                     control_signals_out.reg_write <= false;
@@ -81,7 +81,6 @@ begin
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when jmp =>
-                    reset_if <= '1';
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
@@ -212,7 +211,6 @@ begin
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
                 when beq =>
-                    reset_if <= '1';
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
                     control_signals_out.mem_to_reg <= FROM_ALU;
@@ -234,7 +232,6 @@ begin
                     control_signals_out.jump <= false;
             end case;
         elsif state = S_STALL then
-            reset_if <= '0';
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
             control_signals_out.mem_to_reg <= FROM_ALU;
@@ -245,7 +242,6 @@ begin
             control_signals_out.branch <= false;
             control_signals_out.jump <= false;
         else
-            reset_if <= '0';
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
             control_signals_out.mem_to_reg <= FROM_ALU;

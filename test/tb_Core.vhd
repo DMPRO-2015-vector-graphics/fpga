@@ -74,6 +74,31 @@ begin
         sram_data => sram_data
     );
 
+    scene_mem: entity work.SceneMem
+    port map (
+        clka => clk, clkb => clk,
+        -- port A: processor, read/write
+        wea(0) => scene_mem_we,
+        dina => scene_mem_data_out,
+        addra => scene_mem_addr,
+        douta => scene_mem_data_in,
+        -- port B: output modules, read
+        -- TODO: wire this agains actual output modules
+        web(0) => '0',
+        dinb => (others => '0'),
+        addrb => (others => '0')
+    );
+
+    instr_mem_inst: entity work.instr_mem
+    port map (
+        clka => clk,
+        wea(0) => '0',
+        addra => sram_addr(9 downto 0),
+        dina => (others => '0'),
+        douta => sram_data
+    );
+
+
     clk_process: process
     begin
         clk <= '0';
@@ -83,41 +108,6 @@ begin
     end process;
 
     stim_proc: process
-
-        function memory(
-            addr : std_logic_vector
-        ) return std_logic_vector is
-        begin
-            case to_integer(unsigned(addr)) is
-                when 0 =>
-                    return x"0820";
-                when 2 =>
-                    return x"0000";
-                when 4 =>
-                    return x"345F";
-                when 6 =>
-                    return x"FFFF";
-                when 8 =>
-                    return x"385F";
-                when 10 =>
-                    return x"FFFF";
-                when 12 =>
-                    return x"1401";
-                when 14 =>
-                    return x"1000";
-                when 16 =>
-                    return x"2C00";
-                when 18 =>
-                    return x"0000";
-                when 20 =>
-                    return x"0400";
-                when 22 =>
-                    return x"0014";
-                when others =>
-                    return x"0000";
-            end case;
-        end memory;
-
     begin
         reset <= '1';
         wait for clk_period;
@@ -125,12 +115,8 @@ begin
         reset <= '0';
         wait for clk_period*4;
         processor_enable <= '1';
-        wait for clk_period;
-        
-        for I in 0 to 200 loop
-            sram_data <= memory(sram_addr);
-            wait for clk_period;
-        end loop;
+        wait for clk_period*200;
+        report "Done?";
         wait;
     end process;
 end behavior;

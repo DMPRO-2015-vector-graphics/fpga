@@ -31,9 +31,9 @@ begin
                 address <= target;
             else
                 if branch = true and zero = '1' then
-                    address <= std_logic_vector(unsigned(address) + 4 + unsigned(immediate));
+                    address <= std_logic_vector(unsigned(address) + 2 + unsigned(immediate));
                 else
-                    address <= std_logic_vector(unsigned(address) + 4);
+                    address <= std_logic_vector(unsigned(address) + 2);
                 end if;
             end if;
         end if;
