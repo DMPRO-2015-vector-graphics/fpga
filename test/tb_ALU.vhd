@@ -75,6 +75,14 @@ BEGIN
         wait for clk_period/2;
         assert alu_result_out = x"04D2FFFF";
         assert prim_result = x"0000000000000000000000000000000000";
+        -- movl
+        report "MOVL";
+        immediate <= x"04D2";
+        read_data_1 <= x"FFFF04D2";
+        op <= movl;
+        wait for clk_period/2;
+        assert alu_result_out = x"FFFF04D2";
+        assert prim_result = x"0000000000000000000000000000000000";
         report "ALU test complete";
         wait;
     end process;

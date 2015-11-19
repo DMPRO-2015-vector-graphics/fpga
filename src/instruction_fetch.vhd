@@ -12,6 +12,7 @@ entity instruction_fetch is
     Port ( clk : in STD_LOGIC;
            reset : in STD_LOGIC;
            reset_if : in std_logic;
+           processor_enable : in std_logic;
            address : in  STD_LOGIC_VECTOR (SRAM_ADDR_WIDTH-1 downto 0);
            instruction : out  STD_LOGIC_VECTOR (INSTR_WIDTH-1 downto 0);
            valid : out STD_LOGIC;
@@ -80,9 +81,9 @@ begin
         valid <= low_valid and high_valid;
     end process;
 
-    sram_addr <= addr;
-    sram_ren <= '0';
-    sram_wen <= '1';
+    sram_addr <= addr when processor_enable = '1' else (others => 'Z');
+    sram_ren <= '0' when processor_enable = '1' else 'Z';
+    sram_wen <= '1' when processor_enable = '1' else 'Z';
 
 end Behavioral;
 

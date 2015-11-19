@@ -70,6 +70,7 @@ begin
             clk => core_clk,
             reset_if => reset_if,
             reset => reset,
+            processor_enable => fpga_cs,
             address => proc_imem_address,
             instruction => instruction,
             valid => instr_valid,
