@@ -25,7 +25,7 @@ end instruction_fetch;
 
 architecture Behavioral of instruction_fetch is
     type fetch_states is (offline, init, low, high);
-    signal state : fetch_states := high;
+    signal state : fetch_states := offline;
     signal temp : STD_LOGIC_VECTOR(SRAM_DATA_WIDTH-1 downto 0) := (others => '0');
     signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0);
     signal instr : STD_LOGIC_VECTOR(INSTR_WIDTH-1 downto 0) := (others => '0');
