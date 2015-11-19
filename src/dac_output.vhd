@@ -165,25 +165,25 @@ begin
 					piso_enable <= '0';
 					if unsigned(next_addr) > unsigned(primitive_count) then
                         next_addr <= (others => '0');
-                    end if;               
-                    
-					if enable = '1' then
+                        state <= fetch;
+                    elsif enable = '1' then
                         state <= draw;
                     else
                         state <= fetch;
                     end if;    
                 when draw =>
-					piso_enable <= '1';
                     if p_type = "00000000" then
                         line_enable <= '0';
                         quad_enable <= '0';
                         cube_enable <= '0';
+                        piso_enable <= '0';
                         state <= fetch;
                         piso_in <= (others => '0');
                     elsif p_type = "00000001" then --LINE
                         piso_in <= line_data;
                         line_enable <= '1';
                         quad_enable <= '0';
+                        piso_enable <= '1';
                         cube_enable <= '0';
                         if line_done = '1' then
                             line_enable <= '0';
@@ -197,6 +197,7 @@ begin
                         line_enable <= '0';
                         cube_enable <= '0';
                         quad_enable <= '1';
+                        piso_enable <= '1';
                         if quad_done = '1' then
                             quad_enable <= '0';
                             piso_enable <= '0';
@@ -209,6 +210,7 @@ begin
                         line_enable <= '0';
                         cube_enable <= '1';
                         quad_enable <= '0';
+                        piso_enable <= '1';
                         if cube_done = '1' then
                             cube_enable <= '0';
                             piso_enable <= '0';
@@ -220,6 +222,7 @@ begin
                         line_enable <= '0';
                         cube_enable <= '0';
                         quad_enable <= '0';
+                        piso_enable <= '0';
                         piso_in <= (others => '0');
                         state <= fetch;
                     end if;

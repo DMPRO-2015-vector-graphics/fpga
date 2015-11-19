@@ -7,9 +7,9 @@ entity dac_line is
         p0 : in  STD_LOGIC_VECTOR (31 downto 0);
         p1 : in  STD_LOGIC_VECTOR (31 downto 0);
         reset : in STD_LOGIC;
-		  dout : out STD_LOGIC_VECTOR(31 downto 0);
+		dout : out STD_LOGIC_VECTOR(31 downto 0);
         done : out STD_LOGIC;
-		  sync : in STD_LOGIC;
+		sync : in STD_LOGIC;
         clk : in  STD_LOGIC;
         enable : in STD_LOGIC
     );
@@ -30,6 +30,9 @@ architecture Behavioral of dac_line is
 
     signal step_x : STD_LOGIC_VECTOR(15 downto 0) := (others => '0');
     signal step_y : STD_LOGIC_VECTOR(15 downto 0) := (others => '0');
+    
+    signal neg_x : STD_LOGIC;
+    signal neg_y : STD_LOGIC;
 
 begin
     process(clk, p0, p1, reset, sync)
@@ -48,12 +51,27 @@ begin
                     x1 <= p1(31 downto 16);
                     y1 <= p1(15 downto 0);
 
-                    dx <= std_logic_vector(unsigned(p1(31 downto 16)) - unsigned(p0(31 downto 16)));
-                    dy <= std_logic_vector(unsigned(p1(15 downto 0)) - unsigned(p0(15 downto 0)));
 
-                    step_x <= std_logic_vector((unsigned(p1(31 downto 16)) - unsigned(p0(31 downto 16))) / 128);
-                    step_y <= std_logic_vector((unsigned(p1(15 downto 0)) - unsigned(p0(15 downto 0))) / 128);
-
+                    if(unsigned(p1(31 downto 16)) > unsigned(p0(31 downto 16))) then
+                        dx <= std_logic_vector(unsigned(p1(31 downto 16)) - unsigned(p0(31 downto 16)));
+                        step_x <= std_logic_vector((unsigned(p1(31 downto 16)) - unsigned(p0(31 downto 16))) srl 7);
+                        neg_x <= '0';
+                    else
+                        dx <= std_logic_vector(unsigned(p0(31 downto 16)) - unsigned(p1(31 downto 16)));
+                        step_x <= std_logic_vector((signed(((unsigned(p0(31 downto 16))) - unsigned(p1(31 downto 16)))) srl 7));
+                        neg_x <= '1';
+                    end if;
+                    
+                    if(unsigned(p1(15 downto 0)) > unsigned(p0(15 downto 0))) then
+                        dy <= std_logic_vector(unsigned(p1(15 downto 0)) - unsigned(p0(15 downto 0)));
+                        step_y <= std_logic_vector((unsigned(p1(15 downto 0)) - unsigned(p0(15 downto 0))) srl 7);
+                        neg_y <= '0';
+                    else
+                        dx <= std_logic_vector(unsigned(p0(15 downto 0)) - unsigned(p1(15 downto 0)));
+                        step_y <= std_logic_vector((signed(((unsigned(p0(15 downto 0))) - unsigned(p1(15 downto 0)))) srl 7));
+                        neg_y <= '1';
+                    end if;
+                    
                     err <= x"0000" & std_logic_vector(1024 * (unsigned(unsigned(p1(15 downto 0)) - unsigned(p0(15 downto 0))) - unsigned(unsigned(p1(31 downto 16)) - unsigned(p0(31 downto 16)))));
 
                     if enable = '1' then
@@ -64,19 +82,30 @@ begin
                 when updating =>
                     done <= '0';
                     if(sync = '1') then
-                        dout <= x0(15 downto 0) & y0(15 downto 0 );               
-                        x0 <= std_logic_vector(unsigned(x0) + unsigned(step_x));
+                        dout <= x0(15 downto 0) & y0(15 downto 0 );
+                        if neg_x = '1' then                        
+                            x0 <= std_logic_vector(unsigned(x0) - unsigned(step_x));
+                        else 
+                            x0 <= std_logic_vector(unsigned(x0) + unsigned(step_x));
+                        end if;
                         if signed(err) > 0 then
-                            y0 <= std_logic_vector(unsigned(y0) + unsigned(step_y));
+                            if neg_y = '1' then
+                                y0 <= std_logic_vector(unsigned(y0) - unsigned(step_y));
+                            else
+                                y0 <= std_logic_vector(unsigned(y0) + unsigned(step_y));
+                            end if;
                             err <= std_logic_vector(unsigned(err) - ((2*unsigned(step_x)) * unsigned(dx)));
                         end if;
                         err <= std_logic_vector(unsigned(err) + ((2*unsigned(step_y)) * unsigned(dy)));
-                    end if;                     
-                    if(unsigned(x0) >= unsigned(x1)) then
+                    end if;
+                    if neg_x = '1' and unsigned(x1) >= unsigned(x0) then
                         done <= '1';
                         state <= finished;
-						  elsif enable = '0' then
-							state <= waiting;
+                    elsif neg_x = '0' and unsigned(x0) >= unsigned(x1) then
+                        done <= '1';
+                        state <= finished;
+				    elsif enable = '0' then
+					    state <= waiting;
                     else
                         state <= updating;
                     end if;
