@@ -17,9 +17,9 @@ entity instruction_fetch is
            instruction : out  STD_LOGIC_VECTOR (INSTR_WIDTH-1 downto 0);
            valid : out STD_LOGIC;
            sram_addr : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
-           sram_data : in std_logic_vector(SRAM_DATA_WIDTH-1 downto 0)
---           sram_wen : out std_logic;
---           sram_ren : out std_logic
+           sram_data : in std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
+           sram_wen : out std_logic;
+           sram_ren : out std_logic
        );
 end instruction_fetch;
 
@@ -32,20 +32,20 @@ architecture Behavioral of instruction_fetch is
     signal low_valid : STD_LOGIC := '0';
     signal high_valid : STD_LOGIC := '0';
 begin
-    --sram: entity work.sram
-    --port map(
-    --            clk => clk,
-    --            -- Facing V3K
-    --            address => addr,
-    --            data_out => temp,
-    --            wr => '0',
-    --            data_in => (others => '0'),
-    --            -- Facing SRAM
-    --            we => sram_wen,
-    --            oe => sram_ren,
-    --            a => sram_addr,
-    --            io => sram_data
-    --        );
+    sram: entity work.sram
+    port map(
+                clk => clk,
+                -- Facing V3K
+                address => addr,
+                data_out => temp,
+                wr => '0',
+                data_in => (others => '0'),
+                -- Facing SRAM
+                we => sram_wen,
+                oe => sram_ren,
+                a => sram_addr,
+                io => sram_data
+            );
 
     process(clk, address, reset)
     begin
@@ -59,7 +59,7 @@ begin
             case state is
                 when low =>
                     instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 1);
+                    addr <= std_logic_vector(unsigned(addr) + 2);
                     state <= high;
                     low_valid <= '1';
                 when high =>
@@ -69,15 +69,15 @@ begin
                         addr <= address;
                     else
                         state <= low;
-                        addr <= std_logic_vector(unsigned(addr) + 1);
+                        addr <= std_logic_vector(unsigned(addr) + 2);
                     end if;
                     high_valid <= '1';
                 when offline =>
                     state <= init;
-                    addr <= std_logic_vector(unsigned(addr) + 1);
+                    addr <= std_logic_vector(unsigned(addr) + 2);
                 when init =>
                     instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 1);
+                    addr <= std_logic_vector(unsigned(addr) + 2);
                     state <= high;
             end case;
         end if;	  
@@ -85,8 +85,8 @@ begin
     end process;
 
     sram_addr <= addr;
---    sram_ren <= '0' when processor_enable = '1' else 'Z';
---    sram_wen <= '1' when processor_enable = '1' else 'Z';
+    sram_ren <= '0' when processor_enable = '1' else 'Z';
+    sram_wen <= '1' when processor_enable = '1' else 'Z';
 
 end Behavioral;
 

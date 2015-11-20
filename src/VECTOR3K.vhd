@@ -16,10 +16,10 @@ entity VECTOR3K is
     port (
         clk, reset              : in std_logic;
         -- SRAM
---        sram_addr               : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
---        sram_data               : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
---        sram_wen                : out std_logic;
---        sram_ren                : out std_logic;
+        sram_addr               : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
+        sram_data               : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
+        sram_wen                : out std_logic;
+        sram_ren                : out std_logic;
         -- FB
         fb_addr                 : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
         fb_data                 : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
@@ -58,7 +58,7 @@ architecture Behavior of VECTOR3K is
     signal primitive_count : std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0);
 
     -- instr mem signals
-    signal instr_mem_addr : std_logic_vector(INSTR_MEM_ADDR_WIDTH-1 downto 0);
+    signal instr_mem_addr : std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
     signal instr_mem_data : std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
 
     -- Clock out signals
@@ -67,7 +67,7 @@ architecture Behavior of VECTOR3K is
 begin
     if_inst: entity work.instruction_fetch
         generic map (
-            SRAM_ADDR_WIDTH => INSTR_MEM_ADDR_WIDTH,
+            SRAM_ADDR_WIDTH => SRAM_ADDR_WIDTH,
             SRAM_DATA_WIDTH => SRAM_DATA_WIDTH,
             INSTR_WIDTH => INSTR_WIDTH
         )
@@ -79,21 +79,21 @@ begin
             address => proc_imem_address(9 downto 0),
             instruction => instruction,
             valid => instr_valid,
---            sram_wen => sram_wen,
---            sram_ren => sram_ren,
+            sram_wen => sram_wen,
+            sram_ren => sram_ren,
             sram_addr => instr_mem_addr,
             sram_data => instr_mem_data
         );
 
 
-   instr_mem_inst: entity work.instr_mem
-   port map (
-                clka => core_clk,
-                wea(0) => '0',
-                addra => instr_mem_addr(9 downto 0),
-                dina => (others => '0'),
-                douta => instr_mem_data
-    );
+--   instr_mem_inst: entity work.instr_mem
+--   port map (
+--                clka => core_clk,
+--                wea(0) => '0',
+--                addra => instr_mem_addr(9 downto 0),
+--                dina => (others => '0'),
+--                douta => instr_mem_data
+--    );
 
     fb_data(15) <= fpga_cs;
     fb_data(14 downto 0) <= instruction(14 downto 0);
