@@ -57,6 +57,7 @@ begin
 
     update: process(state, opcode)
     begin
+        control_signals_out.op <= get_op(opcode);
         if state = S_FETCH then
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
@@ -68,7 +69,6 @@ begin
             control_signals_out.branch <= false;
             control_signals_out.jump <= false;
         elsif state = S_EXECUTE then
-            control_signals_out.op <= get_op(opcode);
             case get_op(opcode) is
                 when nop => 
                     control_signals_out.reg_write <= false;

@@ -16,10 +16,10 @@ entity VECTOR3K is
     port (
         clk, reset              : in std_logic;
         -- SRAM
-        sram_addr               : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
-        sram_data               : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
-        sram_wen                : out std_logic;
-        sram_ren                : out std_logic;
+--        sram_addr               : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
+--        sram_data               : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
+--        sram_wen                : out std_logic;
+--        sram_ren                : out std_logic;
         -- FB
         fb_addr                 : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
         fb_data                 : inout std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
@@ -79,8 +79,8 @@ begin
             address => proc_imem_address(9 downto 0),
             instruction => instruction,
             valid => instr_valid,
-            sram_wen => sram_wen,
-            sram_ren => sram_ren,
+--            sram_wen => sram_wen,
+--            sram_ren => sram_ren,
             sram_addr => instr_mem_addr,
             sram_data => instr_mem_data
         );
@@ -95,7 +95,8 @@ begin
                 douta => instr_mem_data
     );
 
-    fb_data <= instruction(15 downto 0);
+    fb_data(15) <= fpga_cs;
+    fb_data(14 downto 0) <= instruction(14 downto 0);
 
     scene_mem: entity work.SceneMem
     port map (
@@ -165,7 +166,5 @@ begin
             primitive_counter_out   => primitive_count
         );
     
-
-    sram_addr <= (others => 'Z');
     vref_sleep <= '1';
 end Behavior;

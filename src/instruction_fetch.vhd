@@ -17,9 +17,9 @@ entity instruction_fetch is
            instruction : out  STD_LOGIC_VECTOR (INSTR_WIDTH-1 downto 0);
            valid : out STD_LOGIC;
            sram_addr : out std_logic_vector(SRAM_ADDR_WIDTH-1 downto 0);
-           sram_data : in std_logic_vector(SRAM_DATA_WIDTH-1 downto 0);
-           sram_wen : out std_logic;
-           sram_ren : out std_logic
+           sram_data : in std_logic_vector(SRAM_DATA_WIDTH-1 downto 0)
+--           sram_wen : out std_logic;
+--           sram_ren : out std_logic
        );
 end instruction_fetch;
 
@@ -85,8 +85,8 @@ begin
     end process;
 
     sram_addr <= addr;
-    sram_ren <= '0' when processor_enable = '1' else 'Z';
-    sram_wen <= '1' when processor_enable = '1' else 'Z';
+--    sram_ren <= '0' when processor_enable = '1' else 'Z';
+--    sram_wen <= '1' when processor_enable = '1' else 'Z';
 
 end Behavioral;
 
