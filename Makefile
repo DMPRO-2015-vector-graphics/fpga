@@ -18,7 +18,7 @@ SUPPORT_SRC = $(addprefix ${CURDIR}/,$(shell find supportFiles -type f))
 STUDENT_SRC = $(addprefix ${CURDIR}/,$(shell find src -type f))
 TEST_SRC = $(addprefix ${CURDIR}/,$(shell find test -type f -name '*.vhd' -o -name '*.v'))
 CONSTRAINT_FILES = $(addprefix ${CURDIR}/,$(shell find supportFiles -type f -name '*.ucf'))
-IP_FILES = $(addprefix ${CURDIR}/,$(shell find supportFiles -type f -name '*.xco'))
+IP_FILES = $(addprefix ${CURDIR}/,$(shell find ipcore_dir -type f -name '*.xco'))
 IP_NETLISTS = ${IP_FILES:.xco=.ngc}
 
 WORK_DIR = ${CURDIR}/work
@@ -99,7 +99,7 @@ ${TRANSLATE_OUT}: ${SYNTH_OUT} ${CONSTRAINT_FILES} ${IP_NETLISTS}
 	@echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	@. /opt/Xilinx/14.5/ISE_DS/settings64.sh && \
 	cd ${WORK_DIR} && \
-	cp ${SYNTH_OUT} ${IP_NETLISTS} . && \
+	(cp ${SYNTH_OUT} ${IP_NETLISTS} . || :) && \
 	${NGDBUILD} -intstyle ise -dd _ngo -sd src/framework -nt timestamp $(addprefix -uc ,${CONSTRAINT_FILES})  -p xc6slx45-csg324-2 ${TOP_NAME}.ngc ${TOP_NAME}.ngd && \
 	cp -v $(notdir $@) $(dir $@)
 
@@ -125,7 +125,7 @@ ${TOP_NAME}.xst: generic_xst.xst
 	@sed -e 's/@designname@/${TOP_NAME}/' $< > $@ && echo "OK" || echo "failed"
 
 
-${TOP_NAME}.prj: $(patsubst %.xco,%.vhd,${SUPPORT_SRC} ${STUDENT_SRC})
+${TOP_NAME}.prj: $(patsubst %.xco,%.vhd,${SUPPORT_SRC} ${STUDENT_SRC} ${IP_FILES})
 	@echo -n "Generating PRJ file... "
 	@for f in $^; do \
 	    case $$f in \

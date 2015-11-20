@@ -30,6 +30,7 @@ src/SceneMem.ngc
 ## Directories
 _xmsgs/
 iseconfig/
+ipcore_dir/*.vhd
 ipcore_dir/instr_mem/
 ipcore_dir/scene_mem/
 ipcore_dir/pll/
