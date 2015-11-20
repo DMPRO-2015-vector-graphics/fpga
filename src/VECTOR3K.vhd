@@ -98,7 +98,7 @@ begin
     fb_data(15) <= fpga_cs;
     fb_data(14 downto 0) <= instruction(14 downto 0);
 
-    scene_mem: entity work.SceneMem
+    scene_mem: entity work.scene_mem
     port map (
         clka => core_clk, clkb => clk_20,
         -- port A: processor, read/write

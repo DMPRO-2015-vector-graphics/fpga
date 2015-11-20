@@ -12,3 +12,30 @@ products/
 src/pll.vhd
 src/SceneMem.vhd
 src/SceneMem.ngc
+
+# Xilinx
+## Extensions
+*.html
+*.gise
+*.xise
+*.ngc
+*.log
+*.tcl
+*.mif
+*.sym
+*.vho
+*.asy
+*.txt
+
+## Directories
+_xmsgs/
+iseconfig/
+ipcore_dir/instr_mem/
+ipcore_dir/scene_mem/
+ipcore_dir/pll/
+ipcore_dir/tmp/
+ipcore_dir/xlnx_auto_0_xdb/
+_xmsgs/
+
+## Specific files
+src/instr_mem.vhd
