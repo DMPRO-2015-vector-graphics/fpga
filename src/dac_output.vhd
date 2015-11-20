@@ -26,9 +26,9 @@ end dac_output;
 architecture Behavioral of dac_output is
     type output_states is (fetch, decode, draw);
     
-	 signal piso_in : STD_LOGIC_VECTOR(31 downto 0);
-	 signal piso_enable : STD_LOGIC;
-	 signal sync : STD_LOGIC;
+	signal piso_in : STD_LOGIC_VECTOR(31 downto 0);
+	signal piso_enable : STD_LOGIC;
+	signal sync : STD_LOGIC;
     signal state : output_states := fetch;
     signal primitive : STD_LOGIC_VECTOR(DATA_WIDTH-1 downto 0);
     signal next_addr : STD_LOGIC_VECTOR(ADDR_WIDTH-1 downto 0);
@@ -131,15 +131,20 @@ begin
         if(reset = '1') then
             state <= fetch;
             next_addr <= (others => '0');
-				piso_enable <= '0';
-				line_enable <= '0';
-				quad_enable <= '0';
-                cube_enable <= '0';
+            piso_enable <= '0';
+            line_enable <= '0';
+            quad_enable <= '0';
+            cube_enable <= '0';
         elsif rising_edge(clk) then
             case state is
                 when fetch =>
                     primitive <= data;
-                    next_addr <= std_logic_vector(unsigned(next_addr) + 1);
+                    
+                    if unsigned(primitive_count) = "0000000000" then
+                       next_addr <= (others => '1');
+                    else
+                       next_addr <= std_logic_vector(unsigned(next_addr) + 1);
+                    end if;
                     if enable = '1' then
                         state <= decode;
                     else
@@ -163,10 +168,10 @@ begin
                     quad_enable <= '0';
                     cube_enable <= '0';
 					piso_enable <= '0';
-					if unsigned(next_addr) > unsigned(primitive_count) then
+					if unsigned(next_addr) >= unsigned(primitive_count) and unsigned(primitive_count) > 0 then
                         next_addr <= (others => '0');
-                        state <= fetch;
-                    elsif enable = '1' then
+                    end if;
+                    if enable = '1' then
                         state <= draw;
                     else
                         state <= fetch;
