@@ -1,4 +1,4 @@
-TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 100 MHz;
+TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 48 MHz;
 NET clk LOC = T10 | IOSTANDARD = LVCMOS33 | TNM_NET = sys_clk_pin;
 
 NET reset TIG | LOC = V13 | IOSTANDARD = LVCMOS33 | PULLDOWN;
