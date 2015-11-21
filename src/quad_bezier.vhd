@@ -63,7 +63,7 @@ begin
 				  when updating =>
 				      done <= '0';
 						if sync = '1' then
-							i <= std_logic_vector(unsigned(i) + 2);			
+							i <= std_logic_vector(unsigned(i) + 4);			
 							dout <= temp_x(30 downto 15) & temp_y(30 downto 15);
 						else
 							t <= i & "00000";
@@ -78,7 +78,7 @@ begin
 							temp_y <= std_logic_vector(((unsigned(a) * unsigned(bez_p0(15 downto 0))) + (unsigned(b) * unsigned(bez_p1(15 downto 0))) + (unsigned(c) * unsigned(bez_p2(15 downto 0))) + (unsigned(d) * unsigned(bez_p3(15 downto 0)))));
 						end if;
 					
-						if unsigned(i) >= (1024 + 2) then
+						if unsigned(i) >= (1024 + 4) then
 							done <= '1';
 							state <= finished;
 						elsif enable = '0' then
