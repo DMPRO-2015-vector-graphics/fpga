@@ -30,18 +30,18 @@ begin
         if reset = '1' or processor_enable = '0' then
             state <= S_OFFLINE;
         elsif rising_edge(clk) then
-            reset_if <= '0';
             control_signals_out.pc_write <= false;
             if state = S_OFFLINE then
                 state <= S_INIT;
             elsif state = S_INIT then
                 state <= S_FETCH;
             elsif state = S_FETCH then
-                control_signals_out.pc_write <= true;
+                state <= S_FETCH2;
+            elsif state = S_FETCH2 then
                 state <= S_EXECUTE;
+                control_signals_out.pc_write <= true;
             elsif state = S_EXECUTE then
                 if get_op(opcode) = ldr or get_op(opcode) = ldrp or get_op(opcode) = beq or get_op(opcode) = jmp then
-                    reset_if <= '1';
                     state <= S_STALL;
                 else
                     if get_op(opcode) = line or get_op(opcode) = bezqube or get_op(opcode) = bezquad then
@@ -55,10 +55,11 @@ begin
         end if;
     end process;
 
-    update: process(state, opcode)
+    update: process(opcode, state)
     begin
         control_signals_out.op <= get_op(opcode);
-        if state = S_FETCH then
+        reset_if <= '0';
+        if state = S_FETCH or state = S_FETCH2 then
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;
             control_signals_out.mem_to_reg <= FROM_ALU;
@@ -90,6 +91,7 @@ begin
                     control_signals_out.mem_write <= false;
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= true;
+                    reset_if <= '1';
                 when add =>
                     control_signals_out.reg_write <= true;
                     control_signals_out.prim_reg_write <= false;
@@ -220,6 +222,7 @@ begin
                     control_signals_out.mem_write <= false;
                     control_signals_out.branch <= true;
                     control_signals_out.jump <= false;
+                    reset_if <= '1';
                 when others =>
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;

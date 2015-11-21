@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 14.5
-# Date: Fri Nov 20 15:09:31 2015
+# Date: Sat Nov 21 14:52:18 2015
 #
 ##############################################################
 #
@@ -64,7 +64,7 @@ CSET clkfb_out_n_port=CLKFB_OUT_N
 CSET clkfb_out_p_port=CLKFB_OUT_P
 CSET clkfb_out_port=CLKFB_OUT
 CSET clkfb_stopped_port=CLKFB_STOPPED
-CSET clkin1_jitter_ps=100.0
+CSET clkin1_jitter_ps=208.33
 CSET clkin1_ui_jitter=0.010
 CSET clkin2_jitter_ps=100.0
 CSET clkin2_ui_jitter=0.010
@@ -76,7 +76,7 @@ CSET clkout2_drives=BUFG
 CSET clkout2_requested_duty_cycle=50.000
 CSET clkout2_requested_out_freq=50.000
 CSET clkout2_requested_phase=0.000
-CSET clkout2_used=true
+CSET clkout2_used=false
 CSET clkout3_drives=BUFG
 CSET clkout3_requested_duty_cycle=50.000
 CSET clkout3_requested_out_freq=100.000
@@ -113,9 +113,9 @@ CSET dcm_clk_out3_port=CLK0
 CSET dcm_clk_out4_port=CLK0
 CSET dcm_clk_out5_port=CLK0
 CSET dcm_clk_out6_port=CLK0
-CSET dcm_clkdv_divide=2.5
-CSET dcm_clkfx_divide=5
-CSET dcm_clkfx_multiply=2
+CSET dcm_clkdv_divide=2.0
+CSET dcm_clkfx_divide=12
+CSET dcm_clkfx_multiply=5
 CSET dcm_clkgen_clk_out1_port=CLKFX
 CSET dcm_clkgen_clk_out2_port=CLKFX
 CSET dcm_clkgen_clk_out3_port=CLKFX
@@ -127,8 +127,8 @@ CSET dcm_clkgen_clkin_period=10.000
 CSET dcm_clkgen_notes=None
 CSET dcm_clkgen_spread_spectrum=NONE
 CSET dcm_clkgen_startup_wait=false
-CSET dcm_clkin_divide_by_2=true
-CSET dcm_clkin_period=10.000
+CSET dcm_clkin_divide_by_2=false
+CSET dcm_clkin_period=20.833
 CSET dcm_clkout_phase_shift=NONE
 CSET dcm_deskew_adjust=SYSTEM_SYNCHRONOUS
 CSET dcm_notes=None
@@ -189,7 +189,7 @@ CSET mmcm_notes=None
 CSET mmcm_ref_jitter1=0.010
 CSET mmcm_ref_jitter2=0.010
 CSET mmcm_startup_wait=false
-CSET num_out_clks=2
+CSET num_out_clks=1
 CSET override_dcm=false
 CSET override_dcm_clkgen=false
 CSET override_mmcm=false
@@ -223,7 +223,7 @@ CSET pll_divclk_divide=1
 CSET pll_notes=None
 CSET pll_ref_jitter=0.010
 CSET power_down_port=POWER_DOWN
-CSET prim_in_freq=100.000
+CSET prim_in_freq=48.000
 CSET prim_in_jitter=0.010
 CSET prim_source=Single_ended_clock_capable_pin
 CSET primary_port=CLK_IN1
@@ -266,4 +266,4 @@ CSET use_status=false
 MISC pkg_timestamp=2012-05-10T12:44:55Z
 # END Extra information
 GENERATE
-# CRC: 65fb9a36
+# CRC: fd939989

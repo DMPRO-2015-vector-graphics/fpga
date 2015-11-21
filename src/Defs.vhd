@@ -5,7 +5,7 @@ use ieee.std_logic_arith.conv_std_logic_vector;
 
 package Defs is
 
-    type state_t is (S_OFFLINE, S_INIT, S_FETCH, S_EXECUTE, S_STALL);
+    type state_t is (S_OFFLINE, S_INIT, S_FETCH, S_FETCH2, S_EXECUTE, S_STALL);
 
     subtype opcode_t is std_logic_vector(5 downto 0);
     subtype reg_t is std_logic_vector(4 downto 0);

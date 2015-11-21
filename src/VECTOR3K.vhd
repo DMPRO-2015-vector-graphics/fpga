@@ -63,7 +63,6 @@ architecture Behavior of VECTOR3K is
 
     -- Clock out signals
     signal clk_20 : std_logic;
-    signal core_clk : std_logic;
 begin
     if_inst: entity work.instruction_fetch
         generic map (
@@ -72,7 +71,7 @@ begin
             INSTR_WIDTH => INSTR_WIDTH
         )
         port map (
-            clk => core_clk,
+            clk => clk_20,
             reset_if => reset_if,
             reset => reset,
             processor_enable => fpga_cs,
@@ -88,7 +87,7 @@ begin
 
    instr_mem_inst: entity work.instr_mem
    port map (
-                clka => core_clk,
+                clka => clk_20,
                 wea(0) => '0',
                 addra => instr_mem_addr(9 downto 0),
                 dina => (others => '0'),
@@ -100,7 +99,7 @@ begin
 
     scene_mem: entity work.scene_mem
     port map (
-        clka => core_clk, clkb => clk_20,
+        clka => clk_20, clkb => clk_20,
         -- port A: processor, read/write
         wea(0) => proc_scene_mem_we,
         dina => proc_scene_mem_write_data,
@@ -136,7 +135,6 @@ begin
     port map(-- Clock in ports
         CLK_IN1            => clk,
         -- Clock out ports
-        CLK_OUT2           => core_clk,
         CLK_OUT1           => clk_20,
         -- Status and control signals
         RESET              => reset
@@ -151,7 +149,7 @@ begin
             SCENE_MEM_ADDR_WIDTH => SCENE_MEM_ADDR_WIDTH
         ) 
         port map (
-            clk                     => core_clk,
+            clk                     => clk_20,
             reset                   => reset,
             processor_enable        => fpga_cs,
             reset_if                => reset_if,

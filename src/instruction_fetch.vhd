@@ -24,72 +24,96 @@ entity instruction_fetch is
 end instruction_fetch;
 
 architecture Behavioral of instruction_fetch is
-    type fetch_states is (offline, init, low, high);
+    type fetch_states is (offline, init, low, high, stall);
     signal state : fetch_states := offline;
     signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0);
-    signal init_update : std_logic;
+    signal temp_instr : std_logic_vector(INSTR_WIDTH-1 downto 0) := (others => '0');
 begin
     update_state: process(clk, reset, reset_if, processor_enable)
     begin
         if reset = '1' or processor_enable = '0' then
             state <= offline;
+            addr <= (others => '1');
+            temp_instr <= (others => '0');
         elsif rising_edge(clk) then
             case state is
                 when offline =>
                     state <= init;
+                    addr <= (others => '0');
+                    temp_instr <= (others => '0');
                 when init =>
                     state <= high;
+                    addr <= std_logic_vector(unsigned(addr) + 1);
                 when high =>
+                    temp_instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
                     if reset_if = '1' then
                         state <= high;
+                        addr <= address;
                     else
                         state <= low;
+                        addr <= std_logic_vector(unsigned(addr) + 1);
                     end if;
                 when low =>
+                    temp_instr(SRAM_DATA_WIDTH-1 downto 0) <= sram_data;
                     if reset_if = '1' then
                         state <= low;
+                        addr <= address;
+                    else
+                        state <= stall;
+                    end if;
+                when stall =>
+                    if reset_if = '1' then
+                        state <= stall;
+                        addr <= address;
                     else
                         state <= high;
+                        addr <= std_logic_vector(unsigned(addr) + 1);
                     end if;
+                    temp_instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
             end case;
         end if;
     end process;
 
-    update_address: process(state)
-    begin
-        case state is
-            when offline =>
-                addr <= (others => '1');
-            when high =>
-                if reset_if = '1' then
-                    addr <= address;
-                else
-                    addr <= std_logic_vector(unsigned(addr) + 1);
-                end if;
-            when low =>
-                if reset_if = '1' then
-                    addr <= address;
-                else
-                    addr <= std_logic_vector(unsigned(addr) + 1);
-                end if;
-            when init =>
-                addr <= (others => '0');
-        end case;
-    end process;
+--    update_address: process(state)
+--    begin
+--        case state is
+--            when offline =>
+--                addr <= (others => '1');
+--            when high =>
+--                if reset_if = '1' then
+--                    addr <= address;
+--                else
+--                    addr <= std_logic_vector(unsigned(addr) + 1);
+--                end if;
+--            when low =>
+--                if reset_if = '1' then
+--                    addr <= address;
+--                else
+--                    addr <= std_logic_vector(unsigned(addr) + 1);
+--                end if;
+--            when init =>
+--                addr <= (others => '0');
+--        end case;
+--    end process;
 
-    process(sram_data)
-    begin
-        case state is
-            when offline =>
-                instruction <= (others => '0');
-            when high =>
-                instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-            when low =>
-                instruction(SRAM_DATA_WIDTH-1 downto 0) <= sram_data;
-            when others =>
-                null;
-        end case;
-    end process;
+--    process(sram_data)
+--    begin
+--        case state is
+--            when offline =>
+--                temp_instr <= (others => '0');
+--            when high =>
+--                temp_instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
+--            when low =>
+--                temp_instr(SRAM_DATA_WIDTH-1 downto 0) <= sram_data;
+--            when init =>
+--                temp_instr <= (others => '0');
+--            when stall =>
+--                temp_instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
+--        end case;
+--    end process;
+
+
+    instruction <= temp_instr;
 
     sram_addr <= addr;
 --    sram_ren <= '0' when processor_enable = '1' else 'Z';
