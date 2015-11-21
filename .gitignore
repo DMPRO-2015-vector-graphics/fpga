@@ -26,6 +26,11 @@ src/SceneMem.ngc
 *.vho
 *.asy
 *.txt
+*.xmsgs
+*.cmd
+*.exe
+*.wdb
+*.ini
 
 ## Directories
 _xmsgs/
@@ -37,6 +42,7 @@ ipcore_dir/pll/
 ipcore_dir/tmp/
 ipcore_dir/xlnx_auto_0_xdb/
 _xmsgs/
+isim/
 
 ## Specific files
 src/instr_mem.vhd

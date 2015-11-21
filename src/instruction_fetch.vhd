@@ -26,62 +26,69 @@ end instruction_fetch;
 architecture Behavioral of instruction_fetch is
     type fetch_states is (offline, init, low, high);
     signal state : fetch_states := offline;
-    signal temp : STD_LOGIC_VECTOR(SRAM_DATA_WIDTH-1 downto 0) := (others => '0');
     signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0);
-    signal instr : STD_LOGIC_VECTOR(INSTR_WIDTH-1 downto 0) := (others => '0');
-    signal low_valid : STD_LOGIC := '0';
-    signal high_valid : STD_LOGIC := '0';
+    signal init_update : std_logic;
 begin
-    --sram: entity work.sram
-    --port map(
-    --            clk => clk,
-    --            -- Facing V3K
-    --            address => addr,
-    --            data_out => temp,
-    --            wr => '0',
-    --            data_in => (others => '0'),
-    --            -- Facing SRAM
-    --            we => sram_wen,
-    --            oe => sram_ren,
-    --            a => sram_addr,
-    --            io => sram_data
-    --        );
-
-    process(clk, address, reset)
+    update_state: process(clk, reset, reset_if, processor_enable)
     begin
         if reset = '1' or processor_enable = '0' then
-            instruction <= (others => '0');
             state <= offline;
-            addr <= (others => '0');
-            high_valid <= '0';
-            low_valid <= '0';
-        elsif(rising_edge(clk)) then
+        elsif rising_edge(clk) then
             case state is
-                when low =>
-                    instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 1);
-                    state <= high;
-                    low_valid <= '1';
-                when high =>
-                    instruction(SRAM_DATA_WIDTH-1 downto 0) <=  sram_data;
-                    if reset_if = '1' then
-                        state <= high;
-                        addr <= address;
-                    else
-                        state <= low;
-                        addr <= std_logic_vector(unsigned(addr) + 1);
-                    end if;
-                    high_valid <= '1';
                 when offline =>
                     state <= init;
-                    addr <= std_logic_vector(unsigned(addr) + 1);
                 when init =>
-                    instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
-                    addr <= std_logic_vector(unsigned(addr) + 1);
                     state <= high;
+                when high =>
+                    if reset_if = '1' then
+                        state <= high;
+                    else
+                        state <= low;
+                    end if;
+                when low =>
+                    if reset_if = '1' then
+                        state <= low;
+                    else
+                        state <= high;
+                    end if;
             end case;
-        end if;	  
-        valid <= low_valid and high_valid;
+        end if;
+    end process;
+
+    update_address: process(state)
+    begin
+        case state is
+            when offline =>
+                addr <= (others => '1');
+            when high =>
+                if reset_if = '1' then
+                    addr <= address;
+                else
+                    addr <= std_logic_vector(unsigned(addr) + 1);
+                end if;
+            when low =>
+                if reset_if = '1' then
+                    addr <= address;
+                else
+                    addr <= std_logic_vector(unsigned(addr) + 1);
+                end if;
+            when init =>
+                addr <= (others => '0');
+        end case;
+    end process;
+
+    process(sram_data)
+    begin
+        case state is
+            when offline =>
+                instruction <= (others => '0');
+            when high =>
+                instruction(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
+            when low =>
+                instruction(SRAM_DATA_WIDTH-1 downto 0) <= sram_data;
+            when others =>
+                null;
+        end case;
     end process;
 
     sram_addr <= addr;

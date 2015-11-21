@@ -74,7 +74,7 @@ begin
         sram_data => sram_data
     );
 
-    scene_mem: entity work.SceneMem
+    scene_mem: entity work.scene_mem
     port map (
         clka => clk, clkb => clk,
         -- port A: processor, read/write
