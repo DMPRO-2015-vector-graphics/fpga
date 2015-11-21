@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-entity dac_line is
+entity line is
     port ( 
         p0 : in  STD_LOGIC_VECTOR (31 downto 0);
         p1 : in  STD_LOGIC_VECTOR (31 downto 0);
@@ -13,9 +13,9 @@ entity dac_line is
         clk : in  STD_LOGIC;
         enable : in STD_LOGIC
     );
-end dac_line;
+end line;
 
-architecture Behavioral of dac_line is
+architecture Behavioral of line is
     signal x0 : STD_LOGIC_VECTOR (16 downto 0) := (others => '0');
     signal y0 : STD_LOGIC_VECTOR (16 downto 0) := (others => '0');
     signal x1 : STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
