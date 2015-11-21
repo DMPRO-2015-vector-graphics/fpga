@@ -83,7 +83,7 @@ begin
     );
 
     -- DRAW LINES
-    dac_line: entity work.dac_line 
+    dac_line: entity work.line2
     port map (
         p0 => p0,
         p1 => p1,
