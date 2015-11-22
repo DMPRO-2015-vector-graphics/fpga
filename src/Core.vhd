@@ -46,8 +46,8 @@ architecture MultiCycle of Core is
     signal prim_result : std_logic_vector(PRIM_WIDTH-1 downto 0);
     -- Control out signals
     signal control_signals : control_signals_t;
-begin
-
+    signal reset_if_tmp : std_logic;
+begin 
     control: entity work.Control
     generic map(
         INSTR_WIDTH => INSTR_WIDTH,
@@ -59,9 +59,10 @@ begin
         reset => reset,
         processor_enable => processor_enable,
         opcode => instruction.opcode,
+        zero => zero,
         control_signals_out => control_signals,
         primitive_counter_out => primitive_counter_out,
-        reset_if => reset_if
+        reset_if => reset_if_tmp
     );
 
     program_counter: entity work.ProgramCounter
@@ -137,6 +138,8 @@ begin
         prim_mem_in => scene_mem_data_in
     );
 
+    reset_if <= reset_if_tmp and zero when control_signals.op = beq else
+                reset_if_tmp;
     -- IMEM
     imem_address <= program_counter_val;
     instruction <= make_instruction(imem_data_in);

@@ -16,7 +16,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="14" />
    <wvobject fp_name="/tb_core/clk" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -25,7 +25,7 @@
       <obj_property name="ElementShortName">reset</obj_property>
       <obj_property name="ObjectShortName">reset</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_core/reset_if" type="logic" db_ref_id="1">
+   <wvobject fp_name="/tb_core/if_inst/reset_if" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">reset_if</obj_property>
       <obj_property name="ObjectShortName">reset_if</obj_property>
    </wvobject>
@@ -41,15 +41,19 @@
       <obj_property name="ElementShortName">state</obj_property>
       <obj_property name="ObjectShortName">state</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_core/core_inst/imem_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">imem_address[18:0]</obj_property>
-      <obj_property name="ObjectShortName">imem_address[18:0]</obj_property>
+   <wvobject fp_name="/tb_core/if_inst/address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">address[18:0]</obj_property>
+      <obj_property name="ObjectShortName">address[18:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_core/core_inst/imem_data_in" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">imem_data_in[31:0]</obj_property>
-      <obj_property name="ObjectShortName">imem_data_in[31:0]</obj_property>
+   <wvobject fp_name="/tb_core/if_inst/instruction" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">instruction[31:0]</obj_property>
+      <obj_property name="ObjectShortName">instruction[31:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/core_inst/instruction" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">instruction</obj_property>
+      <obj_property name="ObjectShortName">instruction</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_core/if_inst/sram_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">sram_addr[18:0]</obj_property>
@@ -61,9 +65,224 @@
       <obj_property name="ObjectShortName">sram_data[15:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/tb_core/if_inst/instruction" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">instruction[31:0]</obj_property>
-      <obj_property name="ObjectShortName">instruction[31:0]</obj_property>
+   <wvobject fp_name="/tb_core/core_inst/control/control_signals_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">control_signals_out</obj_property>
+      <obj_property name="ObjectShortName">control_signals_out</obj_property>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.reg_write" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.reg_write</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.reg_write</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.prim_reg_write" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.prim_reg_write</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.prim_reg_write</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.mem_to_reg" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.mem_to_reg</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.mem_to_reg</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.prim_mem_to_reg" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.prim_mem_to_reg</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.prim_mem_to_reg</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.reg_dest" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.reg_dest</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.reg_dest</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.prim_mem_write" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.prim_mem_write</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.prim_mem_write</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.mem_write" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.mem_write</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.mem_write</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.branch" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.branch</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.branch</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.jump" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.jump</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.jump</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.op" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.op</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.op</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/control/control_signals_out.pc_write" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.pc_write</obj_property>
+         <obj_property name="ObjectShortName">control_signals_out.pc_write</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/tb_core/core_inst/scene_mem_data_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">scene_mem_data_out[135:0]</obj_property>
+      <obj_property name="ObjectShortName">scene_mem_data_out[135:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_core/core_inst/registers/reg_file" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">reg_file[0:31]</obj_property>
+      <obj_property name="ObjectShortName">reg_file[0:31]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[0]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[1]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[1]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[1]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[2]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[2]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[2]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[3]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[3]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[3]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[4]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[4]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[4]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[5]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[5]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[5]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[6]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[6]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[6]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[7]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[7]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[7]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[8]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[8]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[8]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[9]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[9]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[9]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[10]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[10]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[10]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[11]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[11]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[11]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[12]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[12]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[12]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[13]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[13]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[13]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[14]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[14]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[14]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[15]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[15]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[15]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[16]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[16]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[16]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[17]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[17]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[17]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[18]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[18]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[18]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[19]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[19]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[19]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[20]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[20]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[20]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[21]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[21]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[21]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[22]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[22]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[22]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[23]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[23]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[23]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[24]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[24]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[24]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[25]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[25]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[25]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[26]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[26]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[26]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[27]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[27]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[27]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[28]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[28]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[28]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[29]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[29]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[29]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[30]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[30]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[30]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/tb_core/core_inst/registers/reg_file[31]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[31]</obj_property>
+         <obj_property name="ObjectShortName">reg_file[31]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
    </wvobject>
 </wave_config>

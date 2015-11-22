@@ -14,6 +14,7 @@ entity Control is
         reset                   : in std_logic;
         processor_enable        : in std_logic;
         opcode                  : in opcode_t;
+        zero                    : in std_logic;
         control_signals_out     : out control_signals_t;
         reset_if                : out std_logic;
         primitive_counter_out   : out std_logic_vector(SCENE_MEM_ADDR_WIDTH-1 downto 0)
@@ -42,13 +43,19 @@ begin
                 control_signals_out.pc_write <= true;
             elsif state = S_EXECUTE then
                 if get_op(opcode) = ldr or get_op(opcode) = ldrp or get_op(opcode) = beq or get_op(opcode) = jmp then
-                    state <= S_STALL;
+                    if zero = '0' and get_op(opcode) = beq then
+                        state <= S_FETCH;
+                    else
+                        state <= S_STALL1;
+                    end if;
                 else
-                    if get_op(opcode) = line or get_op(opcode) = bezqube or get_op(opcode) = bezquad then
+                    if get_op(opcode) = strp then
                         primitive_counter <= std_logic_vector(unsigned(primitive_counter) + 1);
                     end if;
                     state <= S_FETCH;
                 end if;
+            elsif state = S_STALL1 then
+                state <= S_STALL2;
             else
                 state <= S_FETCH;
             end if;
@@ -223,6 +230,16 @@ begin
                     control_signals_out.branch <= true;
                     control_signals_out.jump <= false;
                     reset_if <= '1';
+                when updp =>
+                    control_signals_out.reg_write <= false;
+                    control_signals_out.prim_reg_write <= false;
+                    control_signals_out.mem_to_reg <= FROM_ALU;
+                    control_signals_out.prim_mem_to_reg <= FROM_ALU;
+                    control_signals_out.reg_dest <= REG1;
+                    control_signals_out.prim_mem_write <= true;
+                    control_signals_out.mem_write <= false;
+                    control_signals_out.branch <= false;
+                    control_signals_out.jump <= false;
                 when others =>
                     control_signals_out.reg_write <= false;
                     control_signals_out.prim_reg_write <= false;
@@ -234,16 +251,6 @@ begin
                     control_signals_out.branch <= false;
                     control_signals_out.jump <= false;
             end case;
-        elsif state = S_STALL then
-            control_signals_out.reg_write <= false;
-            control_signals_out.prim_reg_write <= false;
-            control_signals_out.mem_to_reg <= FROM_ALU;
-            control_signals_out.prim_mem_to_reg <= FROM_ALU;
-            control_signals_out.reg_dest <= REG1;
-            control_signals_out.prim_mem_write <= false;
-            control_signals_out.mem_write <= false;
-            control_signals_out.branch <= false;
-            control_signals_out.jump <= false;
         else
             control_signals_out.reg_write <= false;
             control_signals_out.prim_reg_write <= false;

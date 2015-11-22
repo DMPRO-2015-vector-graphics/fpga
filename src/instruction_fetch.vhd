@@ -24,7 +24,7 @@ entity instruction_fetch is
 end instruction_fetch;
 
 architecture Behavioral of instruction_fetch is
-    type fetch_states is (offline, init, low, high, stall);
+    type fetch_states is (offline, init, low, high, execute, stall1, stall2);
     signal state : fetch_states := offline;
     signal addr : STD_LOGIC_VECTOR(SRAM_ADDR_WIDTH-1 downto 0);
     signal temp_instr : std_logic_vector(INSTR_WIDTH-1 downto 0) := (others => '0');
@@ -59,16 +59,24 @@ begin
                         state <= low;
                         addr <= address;
                     else
-                        state <= stall;
+                        state <= execute;
                     end if;
-                when stall =>
+                when execute =>
                     if reset_if = '1' then
-                        state <= stall;
+                        state <= stall1;
                         addr <= address;
                     else
                         state <= high;
                         addr <= std_logic_vector(unsigned(addr) + 1);
                     end if;
+                    temp_instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
+                when stall1 =>
+                    addr <= address;
+                    state <= stall2;
+                    temp_instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
+                when stall2 =>
+                    addr <= std_logic_vector(unsigned(addr) + 1);
+                    state <= high;
                     temp_instr(INSTR_WIDTH-1 downto SRAM_DATA_WIDTH) <= sram_data;
             end case;
         end if;
